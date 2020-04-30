@@ -5,11 +5,13 @@ class Customer extends Model {
     super.init(
       {
         name: Sequelize.STRING,
-        email: Sequelize.STRING,
-        discount: Sequelize.INTEGER,
         cnpj: Sequelize.STRING,
         phone: Sequelize.STRING,
+        email: Sequelize.STRING,
+        discount: Sequelize.INTEGER,
+        has_fundo_rural: Sequelize.BOOLEAN,
         icms_tax: Sequelize.DECIMAL,
+        zip_code: Sequelize.STRING,
       },
       {
         sequelize,
@@ -17,13 +19,6 @@ class Customer extends Model {
     );
 
     return this;
-  }
-
-  static associate(models) {
-    this.belongsTo(models.Address, {
-      foreignKey: 'address_id',
-      as: 'customer',
-    });
   }
 }
 
