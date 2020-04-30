@@ -6,13 +6,23 @@ import File from '../app/models/File';
 import Appointment from '../app/models/Appointment';
 import CargoPacking from '../app/models/CargoPacking';
 import Customer from '../app/models/Customer';
+import Egg from '../app/models/Egg';
+import OrderItem from '../app/models/OrderItem';
 
 import databaseConfig from '../config/database';
 
 /**
  * Array including all models
  */
-const models = [User, File, Appointment, CargoPacking, Customer];
+const models = [
+  User,
+  File,
+  Appointment,
+  CargoPacking,
+  Customer,
+  Egg,
+  OrderItem,
+];
 
 class Database {
   constructor() {
