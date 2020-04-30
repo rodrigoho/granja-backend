@@ -7,15 +7,15 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       cnpj: {
         type: Sequelize.STRING,
         allowNull: false,
       },
       phone: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -26,6 +26,18 @@ module.exports = {
       },
       discount: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      has_fundo_rural: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+      },
+      icms_tax: {
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+      },
+      zip_code: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       created_at: {

@@ -1,21 +1,25 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('addresses', {
+    queryInterface.createTable('eggs', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      state: {
+      color: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      city: {
+      size: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      complement: {
+      price: {
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+      },
+      last_edited_by: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -28,5 +32,5 @@ module.exports = {
         allowNull: false,
       },
     }),
-  down: (queryInterface) => queryInterface.dropTable('addresses'),
+  down: (queryInterface) => queryInterface.dropTable('eggs'),
 };
