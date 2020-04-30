@@ -1,6 +1,8 @@
 import * as Yup from 'yup';
 import CargoPacking from '../models/CargoPacking';
 import Customer from '../models/Customer';
+import OrderItem from '../models/OrderItem';
+// import Egg from '../models/Egg';
 
 class CargoPackingController {
   async index(req, res) {
@@ -11,11 +13,6 @@ class CargoPackingController {
         'address',
         'eggs_cargo',
         'cargo_packing_number',
-        // 'icms_tax',
-        // 'insurance_fee',
-        // 'name',
-        // 'discount_price',
-        // 'rural_fund_discount',
       ],
       include: [
         {
@@ -36,49 +33,16 @@ class CargoPackingController {
     // .sort({ createdAt: 'desc' })
     // .limit(20);
 
-    const result = cargoPackings.map((cP) => {
-      const total_cargo_price = cP.eggs_cargo.reduce(
-        (acc, egg) => acc + egg.price * egg.qty,
-        0
-      );
-
-      const total_cargo_boxes = cP.eggs_cargo.reduce(
-        (acc, egg) => acc + egg.qty,
-        0
-      );
-
-      const icms_value =
-        cP.customer.icms_tax *
-        cP.eggs_cargo.reduce((acc, egg) => acc + egg.qty, 0) *
-        0.07;
-
-      const customer_name = cP.customer.name;
-      return {
-        virtualData: {
-          total_cargo_price,
-          customer_name,
-          total_cargo_boxes,
-          icms_value,
-        },
-        data: cP,
-      };
-    });
-    return res.json(result);
+    return res.json(cargoPackings);
   }
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      state: Yup.string().required(),
-      city: Yup.string().required(),
-      address: Yup.string().required(),
-      eggs_cargo: Yup.array().required(),
       cargo_packing_number: Yup.number().required(),
+      cargo_packing_status: Yup.boolean().required(),
+      eggs_cargo: Yup.array().required(),
+      due_to: Yup.date().required(),
       customer_id: Yup.number().required(),
-      // icms_tax: Yup.number().required(),
-      // insurance_fee: Yup.number().required(),
-      // name: Yup.string().required(),
-      // discount_price: Yup.number().required(),
-      // rural_fund_discount: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -94,46 +58,36 @@ class CargoPackingController {
 
     const {
       id,
-      state,
-      city,
-      address,
-      eggs_cargo,
       cargo_packing_number,
-      // icms_value,
-      // icms_tax,
-      // insurance_fee,
-      // name,
-      // discount_price,
-      // rural_fund_discount,
+      cargo_packing_status,
+      eggs_cargo,
+      due_to,
+      customer_id,
     } = req.body;
 
+    eggs_cargo.forEach((egg) => {
+      OrderItem.create({
+        cargo_packing_id: id,
+        egg_id: egg.id,
+        amount: egg.qty,
+        cur_egg_price: 10,
+      });
+    });
+
     await CargoPacking.create({
-      id,
-      state,
-      city,
-      address,
-      eggs_cargo,
       cargo_packing_number,
-      // icms_value,
-      // icms_tax,
-      // insurance_fee,
-      // name,
-      // discount_price: discount_price * 100,
-      // rural_fund_discount,
+      cargo_packing_status,
+      due_to,
+      customer_id,
     });
 
     return res.json({
       id,
-      state,
-      city,
-      address,
-      eggs_cargo,
       cargo_packing_number,
-      // icms_tax,
-      // insurance_fee,
-      // name,
-      // discount_price,
-      // rural_fund_discount,
+      cargo_packing_status,
+      eggs_cargo,
+      due_to,
+      customer_id,
     });
   }
 }

@@ -4,18 +4,12 @@ class CargoPacking extends Model {
   static init(sequelize) {
     super.init(
       {
-        state: Sequelize.STRING,
-        city: Sequelize.STRING,
-        address: Sequelize.STRING,
-        eggs_cargo: Sequelize.JSON,
         cargo_packing_number: Sequelize.INTEGER,
+        cargo_packing_status: Sequelize.BOOLEAN,
+        due_to: Sequelize.DATE,
         customer_id: Sequelize.INTEGER,
-        // icms_tax: Sequelize.DECIMAL,
-        // icms_value: Sequelize.DECIMAL,
-        // insurance_fee: Sequelize.DECIMAL,
-        // name: Sequelize.STRING,
-        // discount_price: Sequelize.INTEGER,
-        // rural_fund_discount: Sequelize.DECIMAL,
+        created_by: Sequelize.STRING,
+        updated_by: Sequelize.STRING,
       },
       {
         sequelize,
