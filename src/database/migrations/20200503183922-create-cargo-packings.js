@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
       },
       cargo_packing_number: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         allowNull: false,
         unique: true,
       },
@@ -21,11 +21,23 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      insurance_fee: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      created_by: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      updated_by: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       customer_id: {
         type: Sequelize.INTEGER,
         references: { model: 'customers', key: 'id' },
         onDelete: 'SET NULL',
-        allowNull: false,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,

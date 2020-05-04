@@ -26,7 +26,6 @@ module.exports = {
       cur_egg_price: {
         type: Sequelize.DECIMAL,
         allowNull: false,
-        unique: true,
       },
       created_at: {
         type: Sequelize.DATE,
