@@ -13,16 +13,16 @@ class EggController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    // const eggExists = await Egg.findOne({
-    //   where: {
-    //     size: req.body.size,
-    //     color: req.body.color,
-    //   },
-    // });
+    const eggExists = await Egg.findOne({
+      where: {
+        size: req.body.size,
+        color: req.body.color,
+      },
+    });
 
-    // if (eggExists) {
-    //   return res.status(400).json({ error: 'Egg already exists.' });
-    // }
+    if (eggExists) {
+      return res.status(400).json({ error: 'Egg already exists.' });
+    }
 
     const { id, color, size, price, last_edited_by } = await Egg.create(
       req.body

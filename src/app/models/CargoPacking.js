@@ -7,6 +7,7 @@ class CargoPacking extends Model {
         cargo_packing_number: Sequelize.INTEGER,
         cargo_packing_status: Sequelize.BOOLEAN,
         due_to: Sequelize.DATE,
+        insurance_fee: Sequelize.DECIMAL,
         customer_id: Sequelize.INTEGER,
         created_by: Sequelize.STRING,
         updated_by: Sequelize.STRING,

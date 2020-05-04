@@ -12,6 +12,7 @@ class Customer extends Model {
         has_fundo_rural: Sequelize.BOOLEAN,
         icms_tax: Sequelize.DECIMAL,
         zip_code: Sequelize.STRING,
+        address: Sequelize.JSON,
       },
       {
         sequelize,

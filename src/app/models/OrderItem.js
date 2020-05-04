@@ -4,12 +4,10 @@ class OrderItem extends Model {
   static init(sequelize) {
     super.init(
       {
-        state: Sequelize.STRING,
-        city: Sequelize.STRING,
-        address: Sequelize.STRING,
-        eggs_cargo: Sequelize.JSON,
+        amount: Sequelize.INTEGER,
+        cur_egg_price: Sequelize.DECIMAL,
         cargo_packing_id: Sequelize.INTEGER,
-        customer_id: Sequelize.INTEGER,
+        egg_id: Sequelize.INTEGER,
       },
       {
         sequelize,
@@ -20,10 +18,13 @@ class OrderItem extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.User, { foreignKey: 'customer_id', as: 'customer' });
-    this.belongsTo(models.User, {
+    this.belongsTo(models.CargoPacking, {
       foreignKey: 'cargo_packing_id',
       as: 'cargo_packing',
+    });
+    this.belongsTo(models.Egg, {
+      foreignKey: 'egg_id',
+      as: 'egg',
     });
   }
 }
