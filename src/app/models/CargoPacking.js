@@ -25,6 +25,11 @@ class CargoPacking extends Model {
       foreignKey: 'customer_id',
       as: 'customer',
     });
+    // linking
+    this.hasMany(models.OrderItem, {
+      foreignKey: 'cargo_packing_id',
+      as: 'order_items',
+    });
   }
 }
 
