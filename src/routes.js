@@ -18,6 +18,7 @@ const upload = multer(multerConfig);
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 routes.post('/customers', CustomerController.store);
+routes.get('/customers', CustomerController.index);
 routes.post('/eggs', EggController.store);
 
 // Global middleware
@@ -27,6 +28,10 @@ routes.get('/eggs', EggController.index);
 
 routes.post('/cargo-packing', CargoPackingController.store);
 routes.get('/cargo-packing', CargoPackingController.index);
+routes.get(
+  '/cargo-packing/:customer_id',
+  CargoPackingController.filteredByCustomer
+);
 
 routes.put('/users', UserController.update);
 

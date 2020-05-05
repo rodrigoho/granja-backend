@@ -33,12 +33,31 @@ class CargoPackingController {
             'address',
           ],
         },
+        {
+          model: OrderItem,
+          as: 'order_items',
+        },
       ],
     });
     // .sort({ createdAt: 'desc' })
     // .limit(20);
 
     return res.json(cargoPackings);
+  }
+
+  async filteredByCustomer(req, res) {
+    const filterTypes = ['cargo_packing_status', 'due_to', 'insurance_fee'];
+    const { query } = req;
+
+    // filter incorrect query
+    Object.keys(query).forEach((key) => {
+      if (!filterTypes.includes(key)) delete query[key];
+    });
+    const customerCargoPackings = await CargoPacking.findAll({
+      where: { ...req.params, ...query },
+    });
+
+    return res.json(customerCargoPackings);
   }
 
   async store(req, res) {

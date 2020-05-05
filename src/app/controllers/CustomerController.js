@@ -58,6 +58,12 @@ class CustomerController {
       address,
     });
   }
+
+  async index(req, res) {
+    const customers = await Customer.findAll();
+
+    return res.json(customers);
+  }
 }
 
 export default new CustomerController();
