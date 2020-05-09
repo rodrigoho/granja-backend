@@ -11,7 +11,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: 'cargo_packings', key: 'id' },
         onDelete: 'SET NULL',
-        allowNull: false,
+        allowNull: true,
       },
       egg_id: {
         type: Sequelize.INTEGER,

@@ -24,7 +24,7 @@ class OrderItem extends Model {
     });
     this.belongsTo(models.Egg, {
       foreignKey: 'egg_id',
-      as: 'egg',
+      as: 'egg_details',
     });
   }
 }

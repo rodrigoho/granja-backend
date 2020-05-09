@@ -9,7 +9,7 @@ class CustomerController {
       phone: Yup.string().required(),
       email: Yup.string().email().required(),
       discount: Yup.number().required(),
-      has_fundo_rural: Yup.boolean().required(),
+      rural_fund_tax: Yup.number().required(),
       icms_tax: Yup.number().required(),
       zip_code: Yup.string().required(),
       address: Yup.string().required(),
@@ -33,17 +33,11 @@ class CustomerController {
       phone,
       email,
       discount,
-      has_fundo_rural,
+      rural_fund_tax,
       icms_tax,
       zip_code,
       address,
     } = await Customer.create(req.body);
-
-    // const full_address = {
-    //   state: 'DF',
-    //   city: 'Brasília',
-    //   complement: 'SIA Quadra 6C, lote 3',
-    // };
 
     return res.json({
       id,
@@ -52,7 +46,7 @@ class CustomerController {
       name,
       email,
       discount,
-      has_fundo_rural,
+      rural_fund_tax,
       icms_tax,
       zip_code,
       address,

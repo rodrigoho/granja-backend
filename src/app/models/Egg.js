@@ -7,7 +7,7 @@ class Egg extends Model {
         color: Sequelize.STRING,
         size: Sequelize.STRING,
         price: Sequelize.DECIMAL,
-        last_edited_by: Sequelize.STRING,
+        last_edited_by_user_id: Sequelize.STRING,
       },
       {
         sequelize,
@@ -15,6 +15,13 @@ class Egg extends Model {
     );
 
     return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.User, {
+      foreignKey: 'last_edited_by_user_id',
+      as: 'edited_by_user',
+    });
   }
 }
 

@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      cargo_packing_status: {
+      is_paid: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,
@@ -25,12 +25,31 @@ module.exports = {
         type: Sequelize.DECIMAL,
         allowNull: true,
       },
-      created_by: {
-        type: Sequelize.STRING,
+      eligible_for_analysis: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
+      receipt_value: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
       },
-      updated_by: {
-        type: Sequelize.STRING,
+      receipt_number: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      created_by_user_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'users', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+        allowNull: true,
+      },
+      updated_by_user_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'users', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
         allowNull: true,
       },
       customer_id: {

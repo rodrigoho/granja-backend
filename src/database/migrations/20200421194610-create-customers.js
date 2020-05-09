@@ -28,8 +28,8 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      has_fundo_rural: {
-        type: Sequelize.BOOLEAN,
+      rural_fund_tax: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
       },
       icms_tax: {

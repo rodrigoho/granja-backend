@@ -9,7 +9,7 @@ class Customer extends Model {
         phone: Sequelize.STRING,
         email: Sequelize.STRING,
         discount: Sequelize.INTEGER,
-        has_fundo_rural: Sequelize.BOOLEAN,
+        rural_fund_tax: Sequelize.DECIMAL,
         icms_tax: Sequelize.DECIMAL,
         zip_code: Sequelize.STRING,
         address: Sequelize.JSON,
