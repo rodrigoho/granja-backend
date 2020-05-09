@@ -52,6 +52,33 @@ class EggController {
 
     return res.json(eggs);
   }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      id: Yup.number(),
+      price: Yup.string(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
+    const { price } = req.body;
+    const egg = await Egg.findByPk(req.body.id);
+
+    const updatedEgg = {
+      price,
+      last_edited_by_user_id: req.userId,
+    };
+
+    const { id } = await egg.update(updatedEgg);
+
+    return res.json({
+      id,
+      price,
+      last_edited_by_user_id: req.userId,
+    });
+  }
 }
 
 export default new EggController();

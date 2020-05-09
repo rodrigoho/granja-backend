@@ -26,6 +26,7 @@ routes.get('/customers', CustomerController.index);
 
 routes.post('/eggs', EggController.store);
 routes.get('/eggs', EggController.index);
+routes.put('/eggs', EggController.update);
 
 routes.post('/cargo-packing', CargoPackingController.store);
 routes.get('/cargo-packing', CargoPackingController.indexAll);
