@@ -113,7 +113,9 @@ class CargoPackingController {
       const insuranceFee = parseFloat(
         ((totalEggsCargoPrice / 0.85) * 0.01).toFixed(2)
       );
-      const icmsFee = totalBoxesAmount * icmsTax * 0.07;
+      const icmsFee = parseFloat(
+        (totalBoxesAmount * icmsTax * 0.07).toFixed(2)
+      );
       const discountValue = discount * totalBoxesAmount;
 
       const ruralFundFee = fundoRuralTax
