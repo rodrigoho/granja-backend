@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Egg from '../models/Egg';
+import User from '../models/User';
 
 class EggController {
   async store(req, res) {
@@ -7,7 +8,7 @@ class EggController {
       color: Yup.string().required(),
       size: Yup.string().required(),
       price: Yup.number().required(),
-      last_edited_by: Yup.string().required(),
+      last_edited_by_user_id: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -24,7 +25,7 @@ class EggController {
       return res.status(400).json({ error: 'Egg already exists.' });
     }
 
-    const { id, color, size, price, last_edited_by } = await Egg.create(
+    const { id, color, size, price, last_edited_by_user_id } = await Egg.create(
       req.body
     );
 
@@ -33,12 +34,20 @@ class EggController {
       color,
       size,
       price,
-      last_edited_by,
+      last_edited_by_user_id,
     });
   }
 
   async index(req, res) {
-    const eggs = await Egg.findAll();
+    const eggs = await Egg.findAll({
+      include: [
+        {
+          model: User,
+          as: 'edited_by_user',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
     // console.log(req.userId);
 
     return res.json(eggs);
