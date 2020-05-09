@@ -5,12 +5,15 @@ class CargoPacking extends Model {
     super.init(
       {
         cargo_packing_number: Sequelize.INTEGER,
-        cargo_packing_status: Sequelize.BOOLEAN,
+        is_paid: Sequelize.BOOLEAN,
         due_to: Sequelize.DATE,
         insurance_fee: Sequelize.DECIMAL,
         customer_id: Sequelize.INTEGER,
-        created_by: Sequelize.STRING,
-        updated_by: Sequelize.STRING,
+        created_by_user_id: Sequelize.INTEGER,
+        updated_by_user_id: Sequelize.INTEGER,
+        receipt_number: Sequelize.INTEGER,
+        eligible_for_analysis: Sequelize.BOOLEAN,
+        receipt_value: Sequelize.DECIMAL,
       },
       {
         sequelize,
@@ -25,7 +28,14 @@ class CargoPacking extends Model {
       foreignKey: 'customer_id',
       as: 'customer',
     });
-    // linking
+    this.belongsTo(models.User, {
+      foreignKey: 'created_by_user_id',
+      as: 'created_by_user',
+    });
+    this.belongsTo(models.User, {
+      foreignKey: 'updated_by_user_id',
+      as: 'updated_by_user',
+    });
     this.hasMany(models.OrderItem, {
       foreignKey: 'cargo_packing_id',
       as: 'order_items',
