@@ -63,6 +63,14 @@ class EggController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
+    const { is_admin: isAdmin } = await User.findByPk(req.userId);
+
+    if (!isAdmin) {
+      return res
+        .status(401)
+        .json({ error: `You need admin privilege to edit an egg` });
+    }
+
     const { price } = req.body;
     const egg = await Egg.findByPk(req.body.id);
 
