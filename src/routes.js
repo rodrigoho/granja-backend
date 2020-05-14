@@ -15,29 +15,29 @@ import CargoPackingController from './app/controllers/CargoPackingController';
 const routes = new Router();
 const upload = multer(multerConfig);
 
-routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 
 // Global middleware
 routes.use(authMiddleware);
 
-routes.post('/customers', CustomerController.store);
 routes.get('/customers', CustomerController.index);
+routes.post('/customers', CustomerController.store);
 
-routes.post('/eggs', EggController.store);
 routes.get('/eggs', EggController.index);
+routes.post('/eggs', EggController.store);
 routes.put('/eggs', EggController.update);
 
-routes.post('/cargo-packing', CargoPackingController.store);
 routes.get('/cargo-packing', CargoPackingController.indexAll);
 routes.get(
   '/cargo-packing/:customer_id',
   CargoPackingController.filteredByCustomer
 );
+routes.post('/cargo-packing', CargoPackingController.store);
 routes.put('/cargo-packing/:id', CargoPackingController.update);
 
-routes.put('/users', UserController.update);
 routes.get('/users', UserController.index);
+routes.post('/users', UserController.store);
+routes.put('/users', UserController.update);
 
 routes.get('/notifications', NotificationController.index);
 routes.put('/notifications/:id', NotificationController.update);
