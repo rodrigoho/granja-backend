@@ -9,7 +9,6 @@ class CargoPackingController {
   async indexAll(req, res) {
     const cargoPackings = await CargoPacking.findAll({
       attributes: [
-        // 'cargo_packing_number',
         'is_paid',
         'due_to',
         'has_insurance_fee',
@@ -45,7 +44,6 @@ class CargoPackingController {
       where: { ...req.params, ...query },
       attributes: [
         'id',
-        // 'cargo_packing_number',
         'is_paid',
         'due_to',
         'has_insurance_fee',
@@ -143,7 +141,6 @@ class CargoPackingController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      // cargo_packing_number: Yup.number().required(),
       is_paid: Yup.boolean().required(),
       due_to: Yup.date().required(),
       eggs_cargo: Yup.array(),
@@ -176,7 +173,6 @@ class CargoPackingController {
 
     const {
       id,
-      // cargo_packing_number,
       is_paid,
       eggs_cargo,
       created_by_user_id,
@@ -189,7 +185,6 @@ class CargoPackingController {
     } = req.body;
 
     await CargoPacking.create({
-      // cargo_packing_number,
       is_paid,
       has_insurance_fee,
       due_to,
@@ -223,7 +218,6 @@ class CargoPackingController {
 
     return res.json({
       id,
-      // cargo_packing_number,
       is_paid,
       eligible_for_analysis: eligibeForAnalysis,
       eggs_cargo,
@@ -242,9 +236,6 @@ class CargoPackingController {
       due_to: Yup.date().required(),
       eggs_cargo: Yup.array(),
       has_insurance_fee: Yup.boolean(),
-      // eligible_for_analysis: Yup.boolean().required(),
-      // customer_id: Yup.number().required(),
-      // created_by_user_id: Yup.number().required(),
       receipt_number: Yup.number().required(),
       receipt_value: Yup.number().required(),
     });
@@ -284,7 +275,6 @@ class CargoPackingController {
 
     eggs_cargo.forEach(async (egg) => {
       try {
-        console.log(egg.egg_id);
         const orderItemToUpdate = await OrderItem.findOne({
           where: {
             cargo_packing_id: req.params.id,
