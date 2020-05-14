@@ -7,11 +7,6 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      // cargo_packing_number: {
-      //   type: Sequelize.BIGINT,
-      //   allowNull: false,
-      //   unique: true,
-      // },
       is_paid: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
