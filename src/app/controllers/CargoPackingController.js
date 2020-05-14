@@ -9,10 +9,10 @@ class CargoPackingController {
   async indexAll(req, res) {
     const cargoPackings = await CargoPacking.findAll({
       attributes: [
-        'cargo_packing_number',
+        // 'cargo_packing_number',
         'is_paid',
         'due_to',
-        'insurance_fee',
+        'has_insurance_fee',
         'receipt_number',
         'customer_id',
       ],
@@ -32,7 +32,7 @@ class CargoPackingController {
     const filterTypes = [
       'is_paid',
       'due_to',
-      'insurance_fee',
+      'has_insurance_fee',
       'eligible_for_analysis',
     ];
     const { query } = req;
@@ -45,10 +45,10 @@ class CargoPackingController {
       where: { ...req.params, ...query },
       attributes: [
         'id',
-        'cargo_packing_number',
+        // 'cargo_packing_number',
         'is_paid',
         'due_to',
-        'insurance_fee',
+        'has_insurance_fee',
         'eligible_for_analysis',
         'receipt_value',
         'receipt_number',
@@ -91,6 +91,7 @@ class CargoPackingController {
       const {
         order_items: orderItems,
         receipt_value: receiptValue,
+        has_insurance_fee: hasInsuranceFee,
       } = cargoPacking;
 
       const {
@@ -104,32 +105,32 @@ class CargoPackingController {
         0
       );
 
-      const totalEggsCargoPrice = parseFloat(
-        orderItems
-          .reduce((acc, egg) => acc + egg.cur_egg_price * egg.amount, 0)
-          .toFixed(2)
-      );
-
-      const insuranceFee = parseFloat(
-        ((totalEggsCargoPrice / 0.85) * 0.01).toFixed(2)
-      );
-      const icmsFee = totalBoxesAmount * icmsTax * 0.07;
+      const totalEggsCargoPrice = +orderItems
+        .reduce((acc, egg) => acc + egg.cur_egg_price * egg.amount, 0)
+        .toFixed(2);
+      const insurancePrice = hasInsuranceFee
+        ? +((totalEggsCargoPrice / 0.85) * 0.01).toFixed(2)
+        : 0;
+      const icmsFee = +(totalBoxesAmount * icmsTax * 0.07).toFixed(2);
       const discountValue = discount * totalBoxesAmount;
 
       const ruralFundFee = fundoRuralTax
-        ? parseFloat((receiptValue * fundoRuralTax * 0.01).toFixed(2))
+        ? +(receiptValue * fundoRuralTax * 0.01).toFixed(2)
         : 0;
 
-      const balanceDue = parseFloat(
-        (totalEggsCargoPrice + icmsFee + insuranceFee - ruralFundFee).toFixed(2)
-      );
+      const balanceDue = +(
+        totalEggsCargoPrice +
+        icmsFee +
+        insurancePrice -
+        ruralFundFee
+      ).toFixed(2);
       return {
         cargoPacking,
         cargoVirtualData: {
           totalBoxesAmount,
           totalEggsCargoPrice,
           balanceDue,
-          insuranceFee,
+          insurancePrice,
           icmsFee,
           ruralFundFee,
           discountValue,
@@ -142,10 +143,11 @@ class CargoPackingController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      cargo_packing_number: Yup.number().required(),
+      // cargo_packing_number: Yup.number().required(),
       is_paid: Yup.boolean().required(),
       due_to: Yup.date().required(),
-      insurance_fee: Yup.number(),
+      eggs_cargo: Yup.array(),
+      has_insurance_fee: Yup.boolean(),
       customer_id: Yup.number().required(),
       created_by_user_id: Yup.number().required(),
       receipt_number: Yup.number().required(),
@@ -158,7 +160,7 @@ class CargoPackingController {
       return res.status(400).json({ error: 'Validation fails' });
     }
     const cargoPackingExists = await CargoPacking.findOne({
-      where: { cargo_packing_number: req.body.cargo_packing_number },
+      where: { receipt_number: req.body.receipt_number },
     });
 
     if (cargoPackingExists) {
@@ -174,12 +176,12 @@ class CargoPackingController {
 
     const {
       id,
-      cargo_packing_number,
+      // cargo_packing_number,
       is_paid,
       eggs_cargo,
       created_by_user_id,
       updated_by_user_id,
-      insurance_fee,
+      has_insurance_fee,
       due_to,
       customer_id,
       receipt_value,
@@ -187,9 +189,9 @@ class CargoPackingController {
     } = req.body;
 
     await CargoPacking.create({
-      cargo_packing_number,
+      // cargo_packing_number,
       is_paid,
-      insurance_fee,
+      has_insurance_fee,
       due_to,
       eligible_for_analysis: eligibeForAnalysis,
       customer_id,
@@ -200,7 +202,7 @@ class CargoPackingController {
     });
 
     const currentCargoPacking = await CargoPacking.findOne({
-      where: { cargo_packing_number: req.body.cargo_packing_number },
+      where: { receipt_number: req.body.receipt_number },
     });
 
     eggs_cargo.forEach(async (egg) => {
@@ -221,7 +223,7 @@ class CargoPackingController {
 
     return res.json({
       id,
-      cargo_packing_number,
+      // cargo_packing_number,
       is_paid,
       eligible_for_analysis: eligibeForAnalysis,
       eggs_cargo,
@@ -231,6 +233,77 @@ class CargoPackingController {
       updated_by_user_id,
       receipt_value,
       receipt_number,
+    });
+  }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      is_paid: Yup.boolean().required(),
+      due_to: Yup.date().required(),
+      eggs_cargo: Yup.array(),
+      has_insurance_fee: Yup.boolean(),
+      // eligible_for_analysis: Yup.boolean().required(),
+      // customer_id: Yup.number().required(),
+      // created_by_user_id: Yup.number().required(),
+      receipt_number: Yup.number().required(),
+      receipt_value: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+    const { is_admin: isAdmin } = await User.findByPk(req.userId);
+
+    if (!isAdmin) {
+      return res
+        .status(401)
+        .json({ error: `You need admin privilege to edit an egg` });
+    }
+
+    const {
+      id,
+      eggs_cargo,
+      is_paid,
+      has_insurance_fee,
+      receipt_value,
+      receipt_number,
+      created_by_user_id,
+    } = req.body;
+    const cargoPacking = await CargoPacking.findByPk(req.params.id);
+
+    const updatedCargoPacking = {
+      id,
+      eggs_cargo,
+      is_paid,
+      has_insurance_fee,
+      receipt_value,
+      receipt_number,
+      created_by_user_id,
+      updated_by_user_id: req.userId,
+    };
+
+    eggs_cargo.forEach(async (egg) => {
+      try {
+        console.log(egg.egg_id);
+        const orderItemToUpdate = await OrderItem.findOne({
+          where: {
+            cargo_packing_id: req.params.id,
+            egg_id: egg.egg_id,
+          },
+        });
+
+        await orderItemToUpdate.update({
+          amount: egg.amount,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    await cargoPacking.update(updatedCargoPacking);
+
+    return res.json({
+      updatedCargoPacking,
     });
   }
 }

@@ -26,6 +26,7 @@ routes.get('/customers', CustomerController.index);
 
 routes.post('/eggs', EggController.store);
 routes.get('/eggs', EggController.index);
+routes.put('/eggs', EggController.update);
 
 routes.post('/cargo-packing', CargoPackingController.store);
 routes.get('/cargo-packing', CargoPackingController.indexAll);
@@ -33,6 +34,7 @@ routes.get(
   '/cargo-packing/:customer_id',
   CargoPackingController.filteredByCustomer
 );
+routes.put('/cargo-packing/:id', CargoPackingController.update);
 
 routes.put('/users', UserController.update);
 routes.get('/users', UserController.index);
