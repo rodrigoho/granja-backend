@@ -7,11 +7,11 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      cargo_packing_number: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
-        unique: true,
-      },
+      // cargo_packing_number: {
+      //   type: Sequelize.BIGINT,
+      //   allowNull: false,
+      //   unique: true,
+      // },
       is_paid: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
@@ -21,14 +21,34 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      insurance_fee: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
+      has_insurance_fee: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
       },
       eligible_for_analysis: {
         type: Sequelize.BOOLEAN,
-        allowNull: true,
+        allowNull: false,
         defaultValue: false,
+      },
+      egg_tray_amount: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      egg_tray_price: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      egg_retail_box_amount: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      egg_retail_box_price: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+        defaultValue: 0,
       },
       receipt_value: {
         type: Sequelize.DECIMAL,

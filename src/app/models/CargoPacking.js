@@ -4,10 +4,10 @@ class CargoPacking extends Model {
   static init(sequelize) {
     super.init(
       {
-        cargo_packing_number: Sequelize.INTEGER,
+        // cargo_packing_number: Sequelize.INTEGER,
         is_paid: Sequelize.BOOLEAN,
         due_to: Sequelize.DATE,
-        insurance_fee: Sequelize.DECIMAL,
+        has_insurance_fee: Sequelize.BOOLEAN,
         customer_id: Sequelize.INTEGER,
         created_by_user_id: Sequelize.INTEGER,
         updated_by_user_id: Sequelize.INTEGER,
