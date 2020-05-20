@@ -23,7 +23,9 @@ routes.use(authMiddleware);
 routes.get('/customers', CustomerController.index);
 routes.post('/customers', CustomerController.store);
 
-routes.get('/eggs', EggController.index);
+routes.get('/red-eggs', EggController.indexRed);
+routes.get('/white-eggs', EggController.indexWhite);
+routes.get('/eggs/:id', EggController.filteredIndex);
 routes.post('/eggs', EggController.store);
 routes.put('/eggs', EggController.update);
 

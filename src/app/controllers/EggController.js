@@ -38,8 +38,53 @@ class EggController {
     });
   }
 
-  async index(req, res) {
+  async indexWhite(req, res) {
     const eggs = await Egg.findAll({
+      order: [['price', 'DESC']],
+      where: {
+        color: 'Branco',
+      },
+      include: [
+        {
+          model: User,
+          as: 'edited_by_user',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
+    // console.log(req.userId);
+
+    return res.json(eggs);
+  }
+
+  async indexRed(req, res) {
+    const eggs = await Egg.findAll({
+      order: [['price', 'DESC']],
+      where: {
+        color: 'Vermelho',
+      },
+      include: [
+        {
+          model: User,
+          as: 'edited_by_user',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
+    // console.log(req.userId);
+
+    return res.json(eggs);
+  }
+
+  async filteredIndex(req, res) {
+    const filterTypes = ['color', 'size', 'price', 'last_edited_by_user_id'];
+    const { query } = req;
+
+    // filter incorrect query
+    Object.keys(query).forEach((key) => {
+      if (!filterTypes.includes(key)) delete query[key];
+    });
+    const eggs = await Egg.findByPk(req.params.id, {
       include: [
         {
           model: User,
