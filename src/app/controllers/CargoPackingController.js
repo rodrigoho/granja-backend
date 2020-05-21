@@ -4,6 +4,7 @@ import Customer from '../models/Customer';
 import OrderItem from '../models/OrderItem';
 import Egg from '../models/Egg';
 import User from '../models/User';
+import Notification from '../schemas/Notification';
 
 class CargoPackingController {
   async indexAll(req, res) {
@@ -165,10 +166,21 @@ class CargoPackingController {
     }
     const dueCargoPacking = await CargoPacking.findOne({
       where: { customer_id: req.body.customer_id, is_paid: false },
+      include: [
+        {
+          model: Customer,
+          as: 'customer',
+          attributes: ['name'],
+        },
+      ],
     });
 
     if (dueCargoPacking) {
       eligibeForAnalysis = true;
+      await Notification.create({
+        content: `Novo romaneio de ${dueCargoPacking.customer.name} para análise`,
+        customer: dueCargoPacking.customer_id,
+      });
     }
 
     const {
