@@ -8,7 +8,6 @@ class EggController {
       color: Yup.string().required(),
       size: Yup.string().required(),
       price: Yup.number().required(),
-      last_edited_by_user_id: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -26,7 +25,11 @@ class EggController {
     }
 
     const { id, color, size, price, last_edited_by_user_id } = await Egg.create(
-      req.body
+      {
+        ...req.body,
+        price: parseFloat(req.body.price).toFixed(2),
+        last_edited_by_user_id: req.userId,
+      }
     );
 
     return res.json({
@@ -38,8 +41,23 @@ class EggController {
     });
   }
 
-  async indexWhite(req, res) {
+  async index(req, res) {
     const eggs = await Egg.findAll({
+      order: [['price', 'DESC']],
+      include: [
+        {
+          model: User,
+          as: 'edited_by_user',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
+
+    return res.json(eggs);
+  }
+
+  async indexWhite(req, res) {
+    const whiteEggs = await Egg.findAll({
       order: [['price', 'DESC']],
       where: {
         color: 'Branco',
@@ -52,13 +70,12 @@ class EggController {
         },
       ],
     });
-    // console.log(req.userId);
 
-    return res.json(eggs);
+    return res.json(whiteEggs);
   }
 
   async indexRed(req, res) {
-    const eggs = await Egg.findAll({
+    const redEggs = await Egg.findAll({
       order: [['price', 'DESC']],
       where: {
         color: 'Vermelho',
@@ -71,9 +88,8 @@ class EggController {
         },
       ],
     });
-    // console.log(req.userId);
 
-    return res.json(eggs);
+    return res.json(redEggs);
   }
 
   async filteredIndex(req, res) {
@@ -93,7 +109,6 @@ class EggController {
         },
       ],
     });
-    // console.log(req.userId);
 
     return res.json(eggs);
   }
@@ -101,26 +116,26 @@ class EggController {
   async update(req, res) {
     const schema = Yup.object().shape({
       id: Yup.number(),
-      price: Yup.string(),
+      price: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { is_admin: isAdmin } = await User.findByPk(req.userId);
+    // const { is_admin: isAdmin } = await User.findByPk(req.userId);
 
-    if (!isAdmin) {
-      return res
-        .status(401)
-        .json({ error: `You need admin privilege to edit an egg` });
-    }
+    // if (!isAdmin) {
+    //   return res
+    //     .status(401)
+    //     .json({ error: `You need admin privilege to edit an egg` });
+    // }
 
     const { price } = req.body;
     const egg = await Egg.findByPk(req.body.id);
-
+    const formattedPrice = parseFloat(price).toFixed(2);
     const updatedEgg = {
-      price,
+      price: formattedPrice,
       last_edited_by_user_id: req.userId,
     };
 

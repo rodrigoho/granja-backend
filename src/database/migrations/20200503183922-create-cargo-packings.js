@@ -25,6 +25,21 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      discount: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      rural_fund_tax: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      icms_tax: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+        defaultValue: 0,
+      },
       egg_tray_amount: {
         type: Sequelize.INTEGER,
         allowNull: true,
@@ -52,6 +67,7 @@ module.exports = {
       receipt_number: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        unique: true,
       },
       created_by_user_id: {
         type: Sequelize.INTEGER,

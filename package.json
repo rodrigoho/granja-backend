@@ -8,7 +8,7 @@
     "queue": "nodemon src/queue.js"
   },
   "dependencies": {
-    "@sentry/node": "5.15.4",
+    "@sentry/node": "5.20.1",
     "bcryptjs": "^2.4.3",
     "bee-queue": "^1.2.3",
     "cors": "^2.8.5",
@@ -16,27 +16,27 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
-    "express-handlebars": "^4.0.3",
+    "express-handlebars": "^5.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.7",
     "multer": "^1.4.2",
     "nodemailer": "^6.4.6",
     "nodemailer-express-handlebars": "^4.0.0",
-    "pg": "^7.12.1",
+    "pg": "^8.3.0",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^5.21.2",
+    "sequelize": "^6.3.4",
     "youch": "^2.0.10",
-    "yup": "^0.27.0"
+    "yup": "^0.29.3"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
+    "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-prettier": "^3.1.2",
-    "nodemon": "^1.19.4",
+    "nodemon": "^2.0.4",
     "prettier": "^2.0.4",
-    "sequelize-cli": "^5.5.1",
+    "sequelize-cli": "^6.2.0",
     "sucrase": "^3.10.1"
   }
 }

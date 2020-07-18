@@ -13,7 +13,7 @@ module.exports = {
       },
       cnpj: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       phone: {
         type: Sequelize.STRING,
@@ -21,11 +21,19 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
+        allowNull: true,
       },
       discount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+      },
+      is_enabled: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      red_egg_tax: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
       },
       rural_fund_tax: {

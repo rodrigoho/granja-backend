@@ -35,6 +35,7 @@ class SessionController {
     const { id, name, avatar, is_admin } = user;
 
     return res.json({
+      message: 'Login efetuado com sucesso',
       user: {
         id,
         name,
