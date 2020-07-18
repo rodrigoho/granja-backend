@@ -28,6 +28,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      is_enabled: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
       rural_fund_tax: {
         type: Sequelize.DECIMAL,
         allowNull: false,

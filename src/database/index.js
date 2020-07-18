@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 
 import User from '../app/models/User';
 import File from '../app/models/File';
@@ -8,6 +8,7 @@ import CargoPacking from '../app/models/CargoPacking';
 import Customer from '../app/models/Customer';
 import Egg from '../app/models/Egg';
 import OrderItem from '../app/models/OrderItem';
+import AdditionalFee from '../app/models/AdditionalFee';
 
 import databaseConfig from '../config/database';
 
@@ -22,12 +23,13 @@ const models = [
   Customer,
   Egg,
   OrderItem,
+  AdditionalFee,
 ];
 
 class Database {
   constructor() {
     this.init();
-    this.mongo();
+    // this.mongo();
   }
 
   init() {
@@ -40,16 +42,16 @@ class Database {
       );
   }
 
-  mongo() {
-    this.mongoConnection = mongoose.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useFindAndModify: true,
-      useUnifiedTopology: true, // investigate later
-    });
-    const db = mongoose.connection;
+  // mongo() {
+  //   this.mongoConnection = mongoose.connect(process.env.MONGO_URL, {
+  //     useNewUrlParser: true,
+  //     useFindAndModify: true,
+  //     useUnifiedTopology: true, // investigate later
+  //   });
+  //   const db = mongoose.connection;
 
-    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-  }
+  //   db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+  // }
 }
 
 export default new Database();

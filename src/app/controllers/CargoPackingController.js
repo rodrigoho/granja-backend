@@ -4,12 +4,18 @@ import Customer from '../models/Customer';
 import OrderItem from '../models/OrderItem';
 import Egg from '../models/Egg';
 import User from '../models/User';
-import Notification from '../schemas/Notification';
+// import Notification from '../schemas/Notification';
 
 class CargoPackingController {
   async indexAll(req, res) {
-    const cargoPackings = await CargoPacking.findAll({
+    const { page = 1 } = req.query;
+
+    const cargoPackings = await CargoPacking.findAndCountAll({
+      limit: 9,
+      offset: (page - 1) * 9,
+      order: [['id', 'ASC']],
       attributes: [
+        'id',
         'is_paid',
         'due_to',
         'has_insurance_fee',
@@ -28,7 +34,7 @@ class CargoPackingController {
     return res.json(cargoPackings);
   }
 
-  async filteredByCustomer(req, res) {
+  async filteredById(req, res) {
     const filterTypes = [
       'is_paid',
       'due_to',
@@ -41,13 +47,19 @@ class CargoPackingController {
     Object.keys(query).forEach((key) => {
       if (!filterTypes.includes(key)) delete query[key];
     });
-    const customerCargoPackings = await CargoPacking.findAll({
-      where: { ...req.params, ...query },
+    const cargoPacking = await CargoPacking.findByPk(req.params.id, {
       attributes: [
         'id',
         'is_paid',
         'due_to',
         'has_insurance_fee',
+        'icms_tax',
+        'egg_tray_amount',
+        'egg_tray_price',
+        'egg_retail_box_amount',
+        'egg_retail_box_price',
+        'rural_fund_tax',
+        'discount',
         'eligible_for_analysis',
         'receipt_value',
         'receipt_number',
@@ -69,12 +81,141 @@ class CargoPackingController {
         {
           model: Customer,
           as: 'customer',
-          attributes: ['name', 'discount', 'rural_fund_tax', 'icms_tax'],
+          attributes: ['name'],
         },
         {
           model: OrderItem,
           as: 'order_items',
-          attributes: ['amount', 'cur_egg_price'],
+          attributes: ['id', 'amount', 'cur_egg_price'],
+          include: [
+            {
+              model: Egg,
+              as: 'egg_details',
+              attributes: ['color', 'size'],
+            },
+          ],
+        },
+      ],
+    });
+    const {
+      order_items: orderItems,
+      receipt_value: receiptValue,
+      has_insurance_fee: hasInsuranceFee,
+      icms_tax: icmsTax,
+      rural_fund_tax: fundoRuralTax,
+      egg_tray_amount: eggTrayAmount,
+      egg_tray_price: eggTrayPrice,
+      egg_retail_box_amount: eggRetailBoxAmount,
+      egg_retail_box_price: eggRetailBoxPrice,
+      discount,
+    } = cargoPacking;
+
+    const totalBoxesAmount = orderItems.reduce(
+      (acc, egg) => acc + egg.amount,
+      0
+    );
+
+    const totalEggsCargoPrice = +orderItems
+      .reduce((acc, egg) => acc + egg.cur_egg_price * egg.amount, 0)
+      .toFixed(2);
+
+    const insurancePrice = hasInsuranceFee
+      ? +((totalEggsCargoPrice / 0.85) * 0.01).toFixed(2)
+      : 0;
+
+    const icmsFee = +(totalBoxesAmount * icmsTax * 0.07).toFixed(2);
+
+    const discountValue = discount * totalBoxesAmount;
+
+    const ruralFundFee = fundoRuralTax
+      ? +(receiptValue * fundoRuralTax * 0.01).toFixed(2)
+      : 0;
+
+    const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
+    const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+
+    const balanceDue = +(
+      totalEggsCargoPrice +
+      icmsFee +
+      insurancePrice -
+      ruralFundFee -
+      discountValue +
+      eggTrayValue +
+      eggRetailBoxValue
+    ).toFixed(2);
+
+    return res.json({
+      cargoPacking,
+      cargoVirtualData: {
+        totalBoxesAmount,
+        totalEggsCargoPrice,
+        balanceDue,
+        insurancePrice,
+        icmsFee,
+        ruralFundFee,
+        discountValue,
+        eggTrayValue,
+        eggRetailBoxValue,
+      },
+    });
+
+    // return res.json(customerCargoPacking);
+  }
+
+  async filteredByCustomer(req, res) {
+    const filterTypes = [
+      'is_paid',
+      'due_to',
+      'has_insurance_fee',
+      'eligible_for_analysis',
+    ];
+    const { query } = req;
+
+    // filter incorrect query
+    Object.keys(query).forEach((key) => {
+      if (!filterTypes.includes(key)) delete query[key];
+    });
+    const customerCargoPackings = await CargoPacking.findAll({
+      where: { customer_id: req.params.id },
+      attributes: [
+        'id',
+        'is_paid',
+        'due_to',
+        'has_insurance_fee',
+        'icms_tax',
+        'egg_tray_amount',
+        'egg_tray_price',
+        'egg_retail_box_amount',
+        'egg_retail_box_price',
+        'rural_fund_tax',
+        'discount',
+        'eligible_for_analysis',
+        'receipt_value',
+        'receipt_number',
+        'created_by_user_id',
+        'updated_by_user_id',
+        'customer_id',
+      ],
+      include: [
+        {
+          model: User,
+          as: 'created_by_user',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: User,
+          as: 'updated_by_user',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Customer,
+          as: 'customer',
+          attributes: ['name'],
+        },
+        {
+          model: OrderItem,
+          as: 'order_items',
+          attributes: ['id', 'amount', 'cur_egg_price'],
           include: [
             {
               model: Egg,
@@ -87,17 +228,19 @@ class CargoPackingController {
     });
 
     const result = customerCargoPackings.map((cargoPacking) => {
+      console.log(JSON.stringify(cargoPacking));
       const {
         order_items: orderItems,
         receipt_value: receiptValue,
         has_insurance_fee: hasInsuranceFee,
-      } = cargoPacking;
-
-      const {
         icms_tax: icmsTax,
         rural_fund_tax: fundoRuralTax,
+        egg_tray_amount: eggTrayAmount,
+        egg_tray_price: eggTrayPrice,
+        egg_retail_box_amount: eggRetailBoxAmount,
+        egg_retail_box_price: eggRetailBoxPrice,
         discount,
-      } = cargoPacking.customer;
+      } = cargoPacking;
 
       const totalBoxesAmount = orderItems.reduce(
         (acc, egg) => acc + egg.amount,
@@ -111,17 +254,24 @@ class CargoPackingController {
         ? +((totalEggsCargoPrice / 0.85) * 0.01).toFixed(2)
         : 0;
       const icmsFee = +(totalBoxesAmount * icmsTax * 0.07).toFixed(2);
+
       const discountValue = discount * totalBoxesAmount;
 
       const ruralFundFee = fundoRuralTax
         ? +(receiptValue * fundoRuralTax * 0.01).toFixed(2)
         : 0;
 
+      const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
+      const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+
       const balanceDue = +(
         totalEggsCargoPrice +
         icmsFee +
         insurancePrice -
-        ruralFundFee
+        ruralFundFee -
+        discountValue +
+        eggTrayValue +
+        eggRetailBoxValue
       ).toFixed(2);
       return {
         cargoPacking,
@@ -133,6 +283,8 @@ class CargoPackingController {
           icmsFee,
           ruralFundFee,
           discountValue,
+          eggTrayValue,
+          eggRetailBoxValue,
         },
       };
     });
@@ -147,6 +299,9 @@ class CargoPackingController {
       eggs_cargo: Yup.array(),
       has_insurance_fee: Yup.boolean(),
       customer_id: Yup.number().required(),
+      // discount: Yup.number().required(),
+      // rural_fund_tax: Yup.number().required(),
+      // icms_tax: Yup.number().required(),
       created_by_user_id: Yup.number().required(),
       receipt_number: Yup.number().required(),
       receipt_value: Yup.number().required(),
@@ -177,10 +332,10 @@ class CargoPackingController {
 
     if (dueCargoPacking) {
       eligibeForAnalysis = true;
-      await Notification.create({
-        content: `Novo romaneio de ${dueCargoPacking.customer.name} para análise`,
-        customer: dueCargoPacking.customer_id,
-      });
+      // await Notification.create({
+      //   content: `Novo romaneio de ${dueCargoPacking.customer.name} para análise`,
+      //   customer: dueCargoPacking.customer_id,
+      // });
     }
 
     const {
@@ -190,11 +345,26 @@ class CargoPackingController {
       created_by_user_id,
       updated_by_user_id,
       has_insurance_fee,
+      discount,
+      rural_fund_tax,
+      icms_tax,
+      egg_tray_amount,
+      egg_tray_price,
+      egg_retail_box_amount,
+      egg_retail_box_price,
       due_to,
       customer_id,
       receipt_value,
       receipt_number,
     } = req.body;
+
+    const discountToSave = discount || 0;
+    const ruralFundTaxToSave = rural_fund_tax || 0;
+    const icmsToSave = icms_tax || 0;
+    const eggTrayAmount = egg_tray_amount || 0;
+    const eggTrayPrice = egg_tray_price || 0;
+    const eggRetailBoxAmount = egg_retail_box_amount || 0;
+    const eggRetailBoxPrice = egg_retail_box_price || 0;
 
     await CargoPacking.create({
       is_paid,
@@ -202,6 +372,13 @@ class CargoPackingController {
       due_to,
       eligible_for_analysis: eligibeForAnalysis,
       customer_id,
+      egg_tray_amount: eggTrayAmount,
+      egg_tray_price: eggTrayPrice,
+      egg_retail_box_amount: eggRetailBoxAmount,
+      egg_retail_box_price: eggRetailBoxPrice,
+      discount: discountToSave,
+      rural_fund_tax: ruralFundTaxToSave,
+      icms_tax: icmsToSave,
       created_by_user_id,
       updated_by_user_id,
       receipt_value,
@@ -215,14 +392,16 @@ class CargoPackingController {
     eggs_cargo.forEach(async (egg) => {
       try {
         const currentEgg = await Egg.findOne({
-          where: { id: egg.egg_id },
+          where: { color: egg.color, size: egg.size },
+          // where: { id: egg.egg_id },
         });
-        await OrderItem.create({
-          cargo_packing_id: currentCargoPacking.id,
-          egg_id: egg.egg_id,
-          amount: egg.amount,
-          cur_egg_price: currentEgg.price,
-        });
+        if (egg.amount > 0)
+          await OrderItem.create({
+            cargo_packing_id: currentCargoPacking.id,
+            egg_id: currentEgg.id,
+            amount: egg.amount,
+            cur_egg_price: currentEgg.price,
+          });
       } catch (err) {
         console.log(err);
       }
@@ -231,6 +410,9 @@ class CargoPackingController {
     return res.json({
       id,
       is_paid,
+      discount,
+      rural_fund_tax,
+      icms_tax,
       eligible_for_analysis: eligibeForAnalysis,
       eggs_cargo,
       due_to,
