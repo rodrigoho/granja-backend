@@ -13,6 +13,8 @@ import authMiddleware from './app/middlewares/auth';
 import CargoPackingController from './app/controllers/CargoPackingController';
 import AdditionaFeeController from './app/controllers/AdditionaFeeController';
 
+import IntermediaryCustomerController from './app/controllers/IntermediaryCustomerController';
+
 const routes = new Router();
 const upload = multer(multerConfig);
 
@@ -53,6 +55,8 @@ routes.get(
 
 routes.get('/users', UserController.index);
 routes.put('/users', UserController.update);
+
+routes.post('/intermediary-customer', IntermediaryCustomerController.store);
 
 // routes.get('/notifications', NotificationController.index);
 // routes.put('/notifications/:id', NotificationController.update);

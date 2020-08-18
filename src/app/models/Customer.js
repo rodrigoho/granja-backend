@@ -11,6 +11,7 @@ class Customer extends Model {
         discount: Sequelize.DECIMAL,
         red_egg_tax: Sequelize.DECIMAL,
         rural_fund_tax: Sequelize.DECIMAL,
+        intermediary_id: Sequelize.INTEGER,
         icms_tax: Sequelize.DECIMAL,
         zip_code: Sequelize.STRING,
         address: Sequelize.JSON,

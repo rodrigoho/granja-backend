@@ -64,6 +64,7 @@ class CargoPackingController {
         'receipt_value',
         'receipt_number',
         'created_by_user_id',
+        'created_at',
         'updated_by_user_id',
         'customer_id',
       ],
@@ -86,7 +87,7 @@ class CargoPackingController {
         {
           model: OrderItem,
           as: 'order_items',
-          attributes: ['id', 'amount', 'cur_egg_price'],
+          attributes: ['id', 'amount', 'cur_egg_price', 'discount'],
           include: [
             {
               model: Egg,
@@ -107,7 +108,7 @@ class CargoPackingController {
       egg_tray_price: eggTrayPrice,
       egg_retail_box_amount: eggRetailBoxAmount,
       egg_retail_box_price: eggRetailBoxPrice,
-      discount,
+      // discount,
     } = cargoPacking;
 
     const totalBoxesAmount = orderItems.reduce(
@@ -116,7 +117,10 @@ class CargoPackingController {
     );
 
     const totalEggsCargoPrice = +orderItems
-      .reduce((acc, egg) => acc + egg.cur_egg_price * egg.amount, 0)
+      .reduce(
+        (acc, egg) => acc + (egg.cur_egg_price - egg.discount) * egg.amount,
+        0
+      )
       .toFixed(2);
 
     const insurancePrice = hasInsuranceFee
@@ -125,7 +129,7 @@ class CargoPackingController {
 
     const icmsFee = +(totalBoxesAmount * icmsTax * 0.07).toFixed(2);
 
-    const discountValue = discount * totalBoxesAmount;
+    // const discountValue = discount * totalBoxesAmount;
 
     const ruralFundFee = fundoRuralTax
       ? +(receiptValue * fundoRuralTax * 0.01).toFixed(2)
@@ -139,7 +143,7 @@ class CargoPackingController {
       icmsFee +
       insurancePrice -
       ruralFundFee -
-      discountValue +
+      // discountValue +
       eggTrayValue +
       eggRetailBoxValue
     ).toFixed(2);
@@ -153,7 +157,7 @@ class CargoPackingController {
         insurancePrice,
         icmsFee,
         ruralFundFee,
-        discountValue,
+        // discountValue,
         eggTrayValue,
         eggRetailBoxValue,
       },
@@ -215,7 +219,7 @@ class CargoPackingController {
         {
           model: OrderItem,
           as: 'order_items',
-          attributes: ['id', 'amount', 'cur_egg_price'],
+          attributes: ['id', 'amount', 'cur_egg_price', 'discount'],
           include: [
             {
               model: Egg,
@@ -392,6 +396,7 @@ class CargoPackingController {
             cargo_packing_id: currentCargoPacking.id,
             egg_id: currentEgg.id,
             amount: egg.amount,
+            discount: egg.discount,
             cur_egg_price: currentEgg.price,
           });
       } catch (err) {

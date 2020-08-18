@@ -8,6 +8,7 @@ class OrderItem extends Model {
         cur_egg_price: Sequelize.DECIMAL,
         cargo_packing_id: Sequelize.INTEGER,
         egg_id: Sequelize.INTEGER,
+        discount: Sequelize.INTEGER,
       },
       {
         sequelize,
