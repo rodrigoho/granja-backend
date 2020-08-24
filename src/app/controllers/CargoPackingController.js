@@ -137,6 +137,9 @@ class CargoPackingController {
 
     const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
     const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+    const decimalTotalEggsCargoPrice = parseFloat(totalEggsCargoPrice).toFixed(
+      2
+    );
 
     const balanceDue = +(
       totalEggsCargoPrice +
@@ -152,7 +155,7 @@ class CargoPackingController {
       cargoPacking,
       cargoVirtualData: {
         totalBoxesAmount,
-        totalEggsCargoPrice,
+        totalEggsCargoPrice: decimalTotalEggsCargoPrice,
         balanceDue,
         insurancePrice,
         icmsFee,
@@ -263,9 +266,9 @@ class CargoPackingController {
       const ruralFundFee = fundoRuralTax
         ? +(receiptValue * fundoRuralTax * 0.01).toFixed(2)
         : 0;
-
       const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
-      const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+      const eggRetailBoxValue =
+        parseFloat(eggRetailBoxAmount) * parseFloat(eggRetailBoxPrice);
 
       const balanceDue = +(
         totalEggsCargoPrice +
@@ -354,13 +357,17 @@ class CargoPackingController {
       receipt_number,
     } = req.body;
 
+    const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
+    const decimalEggBoxPrice = parseFloat(egg_retail_box_price).toFixed(2);
+    const decimalReceitpValue = parseFloat(receipt_value).toFixed(2);
+
     const discountToSave = discount || 0;
     const ruralFundTaxToSave = rural_fund_tax || 0;
     const icmsToSave = icms_tax || 0;
     const eggTrayAmount = egg_tray_amount || 0;
-    const eggTrayPrice = egg_tray_price || 0;
+    const eggTrayPrice = decimalEggTrayPrice || 0;
     const eggRetailBoxAmount = egg_retail_box_amount || 0;
-    const eggRetailBoxPrice = egg_retail_box_price || 0;
+    const eggRetailBoxPrice = decimalEggBoxPrice || 0;
 
     await CargoPacking.create({
       is_paid,
@@ -377,7 +384,7 @@ class CargoPackingController {
       icms_tax: icmsToSave,
       created_by_user_id,
       updated_by_user_id,
-      receipt_value,
+      receipt_value: decimalReceitpValue,
       receipt_number,
     });
 
