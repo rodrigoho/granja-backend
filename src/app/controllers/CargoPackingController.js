@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import CargoPacking from '../models/CargoPacking';
 import Customer from '../models/Customer';
+import IntermediaryCustomer from '../models/IntermediaryCustomer';
 import OrderItem from '../models/OrderItem';
 import Egg from '../models/Egg';
 import User from '../models/User';
@@ -27,6 +28,13 @@ class CargoPackingController {
           model: Customer,
           as: 'customer',
           attributes: ['name'],
+          include: [
+            {
+              model: IntermediaryCustomer,
+              as: 'intermediary',
+              attributes: ['name', 'email', 'phone'],
+            },
+          ],
         },
       ],
     });
