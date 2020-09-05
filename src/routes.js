@@ -22,7 +22,7 @@ routes.post('/sessions', SessionController.store);
 routes.post('/users', UserController.store);
 
 // Global middleware
-routes.use(authMiddleware);
+// routes.use(authMiddleware);
 
 routes.get('/customers', CustomerController.index);
 routes.get('/customers/:id', CustomerController.filteredById);
