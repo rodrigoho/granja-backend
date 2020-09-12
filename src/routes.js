@@ -43,6 +43,7 @@ routes.put('/eggs', EggController.update);
 
 routes.get('/cargo-packing', CargoPackingController.indexAll);
 routes.get('/cargo-packing/:id', CargoPackingController.filteredById);
+routes.get('/cargo-packing-edit/:id', CargoPackingController.filteredSimple);
 routes.get('/cargo-packings/:id', CargoPackingController.filteredByCustomer);
 routes.post('/cargo-packing', CargoPackingController.store);
 routes.put('/cargo-packing/:id', CargoPackingController.update);

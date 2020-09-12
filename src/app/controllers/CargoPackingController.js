@@ -306,6 +306,58 @@ class CargoPackingController {
     return res.json(result);
   }
 
+  async filteredSimple(req, res) {
+    const filterTypes = [
+      'is_paid',
+      'due_to',
+      'has_insurance_fee',
+      'eligible_for_analysis',
+    ];
+    const { query } = req;
+
+    // filter incorrect query
+    Object.keys(query).forEach((key) => {
+      if (!filterTypes.includes(key)) delete query[key];
+    });
+    const cargoPacking = await CargoPacking.findByPk(req.params.id, {
+      attributes: [
+        'id',
+        'is_paid',
+        'due_to',
+        'has_insurance_fee',
+        'egg_tray_amount',
+        'egg_tray_price',
+        'egg_retail_box_amount',
+        'egg_retail_box_price',
+        'receipt_value',
+        'receipt_number',
+        'created_by_user_id',
+        'updated_by_user_id',
+        'customer_id',
+      ],
+      include: [
+        {
+          model: OrderItem,
+          as: 'order_items',
+          attributes: ['id', 'amount', 'cur_egg_price', 'discount'],
+          include: [
+            {
+              model: Egg,
+              as: 'egg_details',
+              attributes: ['color', 'size'],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.json({
+      cargoPacking,
+    });
+
+    // return res.json(customerCargoPacking);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       is_paid: Yup.boolean().required(),
