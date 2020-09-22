@@ -116,7 +116,6 @@ class CargoPackingController {
       egg_tray_price: eggTrayPrice,
       egg_retail_box_amount: eggRetailBoxAmount,
       egg_retail_box_price: eggRetailBoxPrice,
-      // discount,
     } = cargoPacking;
 
     const totalBoxesAmount = orderItems.reduce(
@@ -137,8 +136,6 @@ class CargoPackingController {
 
     const icmsFee = +(totalBoxesAmount * icmsTax * 0.07).toFixed(2);
 
-    // const discountValue = discount * totalBoxesAmount;
-
     const ruralFundFee = fundoRuralTax
       ? +(receiptValue * fundoRuralTax * 0.01).toFixed(2)
       : 0;
@@ -153,8 +150,7 @@ class CargoPackingController {
       totalEggsCargoPrice +
       icmsFee +
       insurancePrice -
-      ruralFundFee -
-      // discountValue +
+      ruralFundFee +
       eggTrayValue +
       eggRetailBoxValue
     ).toFixed(2);
@@ -168,13 +164,10 @@ class CargoPackingController {
         insurancePrice,
         icmsFee,
         ruralFundFee,
-        // discountValue,
         eggTrayValue,
         eggRetailBoxValue,
       },
     });
-
-    // return res.json(customerCargoPacking);
   }
 
   async filteredByCustomer(req, res) {
@@ -501,13 +494,13 @@ class CargoPackingController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    const { is_admin: isAdmin } = await User.findByPk(req.userId);
+    // const { is_admin: isAdmin } = await User.findByPk(req.userId);
 
-    if (!isAdmin) {
-      return res
-        .status(401)
-        .json({ error: `You need admin privilege to edit an egg` });
-    }
+    // if (!isAdmin) {
+    //   return res
+    //     .status(401)
+    //     .json({ error: `You need admin privilege to edit an egg` });
+    // }
 
     const {
       id,
@@ -532,17 +525,34 @@ class CargoPackingController {
     };
 
     eggs_cargo.forEach(async (egg) => {
+      console.log(JSON.stringify(egg));
       try {
+        const currentEgg = await Egg.findOne({
+          where: { color: egg.color, size: egg.size },
+        });
         const orderItemToUpdate = await OrderItem.findOne({
           where: {
             cargo_packing_id: req.params.id,
-            egg_id: egg.egg_id,
+            egg_id: currentEgg.id,
           },
         });
 
-        await orderItemToUpdate.update({
-          amount: egg.amount,
-        });
+        console.log('orderItemToUpdate', orderItemToUpdate);
+
+        if (orderItemToUpdate) {
+          await orderItemToUpdate.update({
+            amount: egg.amount,
+            discount: egg.discount,
+          });
+        } else {
+          await OrderItem.create({
+            cargo_packing_id: req.params.id,
+            egg_id: currentEgg.id,
+            amount: egg.amount,
+            discount: egg.discount,
+            cur_egg_price: currentEgg.price,
+          });
+        }
       } catch (err) {
         console.log(err);
       }
