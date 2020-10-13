@@ -66,6 +66,14 @@ class CustomerController {
     return res.json(customers);
   }
 
+  async indexNonRelated(req, res) {
+    const customers = await Customer.findAndCountAll({
+      where: { intermediary_id: null },
+    });
+
+    return res.json(customers);
+  }
+
   async filteredById(req, res) {
     const customer = await Customer.findByPk(req.params.id);
 

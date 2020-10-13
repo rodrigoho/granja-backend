@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import User from '../models/User';
-import File from '../models/File';
 
 class UserController {
   async store(req, res) {
@@ -29,13 +28,26 @@ class UserController {
   }
 
   async index(req, res) {
-    const user = await User.findAll();
+    const users = await User.findAll();
+    return res.json(users);
+  }
+
+  async indexById(req, res) {
+    const user = await User.findByPk(req.params.id);
+
     return res.json(user);
+  }
+
+  async listUsers(req, res) {
+    const users = await User.findAndCountAll({
+      attributes: ['id', 'name', 'email'],
+    });
+
+    return res.json(users);
   }
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string(),
       email: Yup.string(),
       oldPassword: Yup.string().min(6),
       password: Yup.string()
@@ -51,40 +63,53 @@ class UserController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    const { email, oldPassword } = req.body;
+    const {
+      id,
+      email,
+      oldPassword,
+      isAdmin,
+      password,
+      loggedUserId,
+    } = req.body;
 
-    const user = await User.findByPk(req.userId);
-
-    if (email !== user.email) {
-      const userExists = await User.findOne({ where: { email } });
-
-      if (userExists) {
-        return res.status(400).json({ error: 'User already exists' });
-      }
-    }
+    const user = await User.findByPk(req.params.id);
+    console.log(user);
+    console.log('req.params.id', req.params);
+    console.log('oldPassword', oldPassword);
+    const test = await user.checkPassword(oldPassword);
+    console.log('check', test);
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
       return res.status(401).json({ error: 'Password does not match' });
     }
+    console.log(id);
+    console.log(loggedUserId);
 
-    await user.update(req.body);
+    if (loggedUserId === id || isAdmin === 'true') {
+      console.log(`>>>>>>>>>`);
+      console.log(email, password);
+      await user.update({
+        email,
+        password,
+      });
+      return res.json({
+        user,
+        oldPassword,
+        password,
+      });
+    }
 
-    const { id, name, avatar } = await User.findByPk(req.userId, {
-      include: [
-        {
-          model: File,
-          as: 'avatar',
-          attributes: ['id', 'path', 'url'],
-        },
-      ],
-    });
+    // const { name, avatar } = await User.findByPk(req.userId, {
+    //   include: [
+    //     {
+    //       model: File,
+    //       as: 'avatar',
+    //       attributes: ['id', 'path', 'url'],
+    //     },
+    //   ],
+    // });
 
-    return res.json({
-      id,
-      name,
-      email,
-      avatar,
-    });
+    return res.status(403).send({ error: 'Erro ao trocar a senha' });
   }
 }
 

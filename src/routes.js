@@ -26,6 +26,7 @@ routes.post('/users', UserController.store);
 
 routes.get('/customers', CustomerController.index);
 routes.get('/customers/:id', CustomerController.filteredById);
+routes.get('/non-related-customers', CustomerController.indexNonRelated);
 routes.post('/customers', CustomerController.store);
 routes.put('/customers/:id', CustomerController.update);
 routes.delete('/customers/:id', CustomerController.delete);
@@ -55,9 +56,16 @@ routes.get(
 );
 
 routes.get('/users', UserController.index);
-routes.put('/users', UserController.update);
+routes.get('/user/:id', UserController.indexById);
+routes.get('/users-list', UserController.listUsers);
+routes.put('/user/:id', UserController.update);
 
 routes.post('/intermediary-customer', IntermediaryCustomerController.store);
+routes.get('/intermediary-customers', IntermediaryCustomerController.index);
+routes.get(
+  '/intermediary-customer/:id',
+  IntermediaryCustomerController.indexById
+);
 
 // routes.get('/notifications', NotificationController.index);
 // routes.put('/notifications/:id', NotificationController.update);

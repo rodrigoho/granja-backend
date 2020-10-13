@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import Customer from '../models/Customer';
 import IntermediaryCustomer from '../models/IntermediaryCustomer';
 
 class IntermediaryCustomerController {
@@ -20,9 +21,9 @@ class IntermediaryCustomerController {
     if (intermediaryCustomerExists) {
       return res
         .status(400)
-        .json({ error: 'Já existe um cliente com esse Telefone.' });
+        .json({ error: 'Já existe um intermediário com esse Telefone.' });
     }
-
+    const { customers } = req.body;
     const {
       id,
       name,
@@ -30,8 +31,22 @@ class IntermediaryCustomerController {
       email,
       city,
       state,
-      customer_id,
     } = await IntermediaryCustomer.create(req.body);
+
+    console.log(`\n${JSON.stringify(customers)}\n`);
+
+    customers.forEach(async (customerId) => {
+      try {
+        const customerToUpdate = Customer.findByPk(customerId);
+        if (customerToUpdate) {
+          await (await customerToUpdate).update({
+            intermediary_id: id,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    });
 
     return res.json({
       id,
@@ -40,7 +55,6 @@ class IntermediaryCustomerController {
       email,
       city,
       state,
-      customer_id,
     });
   }
 
@@ -56,9 +70,17 @@ class IntermediaryCustomerController {
     return res.json(intermediaryCustomers);
   }
 
-  async filteredById(req, res) {
+  async indexById(req, res) {
     const intermediaryCustomers = await IntermediaryCustomer.findByPk(
-      req.params.id
+      req.params.id,
+      {
+        include: [
+          {
+            model: Customer,
+            as: 'customers',
+          },
+        ],
+      }
     );
 
     return res.json(intermediaryCustomers);

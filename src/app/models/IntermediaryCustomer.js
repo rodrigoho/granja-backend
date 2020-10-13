@@ -17,6 +17,13 @@ class IntermediaryCustomer extends Model {
 
     return this;
   }
+
+  static associate(models) {
+    this.hasMany(models.Customer, {
+      foreignKey: 'intermediary_id',
+      as: 'customers',
+    });
+  }
 }
 
 export default IntermediaryCustomer;

@@ -17,7 +17,7 @@ module.exports = {
       },
       last_edited_by_user_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,
