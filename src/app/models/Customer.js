@@ -5,6 +5,7 @@ class Customer extends Model {
     super.init(
       {
         name: Sequelize.STRING,
+        fantasy_name: Sequelize.STRING,
         cnpj: Sequelize.STRING,
         phone: Sequelize.STRING,
         email: Sequelize.STRING,
