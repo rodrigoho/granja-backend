@@ -11,6 +11,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      fantasy_name: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       cnpj: {
         type: Sequelize.STRING,
         allowNull: true,
@@ -26,11 +30,6 @@ module.exports = {
       discount: {
         type: Sequelize.DECIMAL,
         allowNull: false,
-      },
-      is_enabled: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
       },
       red_egg_tax: {
         type: Sequelize.DECIMAL,
