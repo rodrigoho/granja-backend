@@ -60,12 +60,10 @@ routes.get('/user/:id', UserController.indexById);
 routes.get('/users-list', UserController.listUsers);
 routes.put('/user/:id', UserController.update);
 
-routes.post('/intermediary-customer', IntermediaryCustomerController.store);
-routes.get('/intermediary-customers', IntermediaryCustomerController.index);
-routes.get(
-  '/intermediary-customer/:id',
-  IntermediaryCustomerController.indexById
-);
+routes.post('/intermediaries', IntermediaryCustomerController.store);
+routes.get('/intermediaries', IntermediaryCustomerController.index);
+routes.get('/intermediary/:id', IntermediaryCustomerController.indexById);
+routes.put('/intermediary/:id', IntermediaryCustomerController.update);
 
 // routes.get('/notifications', NotificationController.index);
 // routes.put('/notifications/:id', NotificationController.update);

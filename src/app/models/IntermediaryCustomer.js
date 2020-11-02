@@ -19,9 +19,9 @@ class IntermediaryCustomer extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.Customer, {
+    this.hasMany(models.CargoPacking, {
       foreignKey: 'intermediary_id',
-      as: 'customers',
+      as: 'intermediary',
     });
   }
 }

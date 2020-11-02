@@ -27,6 +27,7 @@ class IntermediaryCustomerController {
     const {
       id,
       name,
+      fantasy_name,
       phone,
       email,
       city,
@@ -44,7 +45,9 @@ class IntermediaryCustomerController {
           });
         }
       } catch (err) {
-        console.log(err);
+        return res
+          .status(400)
+          .json({ error: 'Já existe um cliente com este telefone.' });
       }
     });
 
@@ -52,6 +55,7 @@ class IntermediaryCustomerController {
       id,
       phone,
       name,
+      fantasy_name,
       email,
       city,
       state,
@@ -72,18 +76,62 @@ class IntermediaryCustomerController {
 
   async indexById(req, res) {
     const intermediaryCustomers = await IntermediaryCustomer.findByPk(
-      req.params.id,
-      {
-        include: [
-          {
-            model: Customer,
-            as: 'customers',
-          },
-        ],
-      }
+      req.params.id
     );
 
     return res.json(intermediaryCustomers);
+  }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      phone: Yup.string(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+    const { id, email, name, phone, city, state } = req.body;
+
+    const intermediary = await IntermediaryCustomer.findByPk(req.params.id);
+
+    const usedPhone = await IntermediaryCustomer.findOne({
+      where: { phone: req.body.phone },
+    });
+
+    if (usedPhone) {
+      if (usedPhone.id !== id) {
+        return res
+          .status(400)
+          .json({ error: 'Já existe um cliente com este telefone.' });
+      }
+    }
+
+    await intermediary.update({
+      email,
+      name,
+      phone,
+      city,
+      state,
+    });
+    return res.json({
+      email,
+      name,
+      phone,
+      city,
+      state,
+    });
+
+    // const { name, avatar } = await User.findByPk(req.userId, {
+    //   include: [
+    //     {
+    //       model: File,
+    //       as: 'avatar',
+    //       attributes: ['id', 'path', 'url'],
+    //     },
+    //   ],
+    // });
+
+    // return res.status(403).send({ error: 'Erro ao trocar a senha' });
   }
 }
 export default new IntermediaryCustomerController();

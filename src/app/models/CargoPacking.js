@@ -9,6 +9,7 @@ class CargoPacking extends Model {
         due_to: Sequelize.DATE,
         has_insurance_fee: Sequelize.BOOLEAN,
         customer_id: Sequelize.INTEGER,
+        intermediary_id: Sequelize.INTEGER,
         discount: Sequelize.INTEGER,
         rural_fund_tax: Sequelize.DECIMAL,
         icms_tax: Sequelize.DECIMAL,
@@ -34,6 +35,10 @@ class CargoPacking extends Model {
     this.belongsTo(models.Customer, {
       foreignKey: 'customer_id',
       as: 'customer',
+    });
+    this.belongsTo(models.IntermediaryCustomer, {
+      foreignKey: 'intermediary_id',
+      as: 'intermediary',
     });
     this.belongsTo(models.User, {
       foreignKey: 'created_by_user_id',
