@@ -117,26 +117,6 @@ class CustomerController {
     // const { name, email } = req.body;
     const customer = await Customer.findByPk(req.params.id);
 
-    console.log(req.body);
-
-    // const updatedCustomer = {
-    //   name,
-    //     cnpj,
-    //     phone,
-    //     email,
-    //     discount,
-    //     rural_fund_tax,
-    //     icms_tax,
-    //     zip_code,
-    //     address: {
-    //       public_area: customer.customerAddressLine,
-    //       complement: customer.customerAddressComplement,
-    //       city: customer.customerAddressCity,
-    //       neighborhood: customer.customerAddrNeighborhood,
-    //       state: customer.customerState,
-    //     },
-    // };
-
     await customer.update(req.body);
 
     return res.json({ status: 'success' });

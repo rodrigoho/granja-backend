@@ -46,7 +46,6 @@ class AdditionalFeeController {
     }
 
     const { current_fee_price, online_fee } = req.body;
-    console.log(current_fee_price, online_fee);
     const additionalFee = await AdditionalFee.findByPk(req.params.id);
 
     const updatedAdditionalFee = {

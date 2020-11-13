@@ -34,8 +34,7 @@ class IntermediaryCustomerController {
       state,
     } = await IntermediaryCustomer.create(req.body);
 
-    console.log(`\n${JSON.stringify(customers)}\n`);
-
+    // eslint-disable-next-line consistent-return
     customers.forEach(async (customerId) => {
       try {
         const customerToUpdate = Customer.findByPk(customerId);

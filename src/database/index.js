@@ -10,6 +10,7 @@ import Egg from '../app/models/Egg';
 import OrderItem from '../app/models/OrderItem';
 import AdditionalFee from '../app/models/AdditionalFee';
 import IntermediaryCustomer from '../app/models/IntermediaryCustomer';
+import Notification from '../app/models/Notification';
 
 import databaseConfig from '../config/database';
 
@@ -26,6 +27,7 @@ const models = [
   OrderItem,
   AdditionalFee,
   IntermediaryCustomer,
+  Notification,
 ];
 
 class Database {

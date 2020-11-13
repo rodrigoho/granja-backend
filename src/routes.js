@@ -7,7 +7,7 @@ import CustomerController from './app/controllers/CustomerController';
 import EggController from './app/controllers/EggController';
 import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
-// import NotificationController from './app/controllers/NotificationController';
+import NotificationController from './app/controllers/NotificationController';
 
 import authMiddleware from './app/middlewares/auth';
 import CargoPackingController from './app/controllers/CargoPackingController';
@@ -65,8 +65,9 @@ routes.get('/intermediaries', IntermediaryCustomerController.index);
 routes.get('/intermediary/:id', IntermediaryCustomerController.indexById);
 routes.put('/intermediary/:id', IntermediaryCustomerController.update);
 
-// routes.get('/notifications', NotificationController.index);
-// routes.put('/notifications/:id', NotificationController.update);
+routes.post('/notifications', NotificationController.store);
+routes.get('/notifications', NotificationController.index);
+routes.put('/notifications/:id', NotificationController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
