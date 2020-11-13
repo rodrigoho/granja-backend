@@ -28,13 +28,11 @@ class CargoPackingController {
           model: Customer,
           as: 'customer',
           attributes: ['name'],
-          include: [
-            {
-              model: IntermediaryCustomer,
-              as: 'intermediary',
-              attributes: ['name', 'email', 'phone'],
-            },
-          ],
+        },
+        {
+          model: IntermediaryCustomer,
+          as: 'intermediary',
+          attributes: ['name', 'email', 'phone'],
         },
       ],
     });
@@ -91,6 +89,11 @@ class CargoPackingController {
           model: Customer,
           as: 'customer',
           attributes: ['name', 'address'],
+        },
+        {
+          model: IntermediaryCustomer,
+          as: 'intermediary',
+          attributes: ['name', 'phone'],
         },
         {
           model: OrderItem,
@@ -406,6 +409,7 @@ class CargoPackingController {
       egg_retail_box_price,
       due_to,
       customer_id,
+      intermediary_id,
       receipt_value,
       receipt_number,
     } = req.body;
@@ -428,6 +432,7 @@ class CargoPackingController {
       due_to,
       eligible_for_analysis: eligibeForAnalysis,
       customer_id,
+      intermediary_id,
       egg_tray_amount: eggTrayAmount,
       egg_tray_price: eggTrayPrice,
       egg_retail_box_amount: eggRetailBoxAmount,
@@ -588,6 +593,11 @@ class CargoPackingController {
           model: Customer,
           as: 'customer',
           attributes: ['name'],
+        },
+        {
+          model: IntermediaryCustomer,
+          as: 'intermediary',
+          attributes: ['name', 'email', 'phone'],
         },
       ],
     });
