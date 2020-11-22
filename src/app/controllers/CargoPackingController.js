@@ -371,13 +371,13 @@ class CargoPackingController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    const cargoPackingExists = await CargoPacking.findOne({
-      where: { receipt_number: req.body.receipt_number },
-    });
+    // const cargoPackingExists = await CargoPacking.findOne({
+    //   where: { receipt_number: req.body.receipt_number },
+    // });
 
-    if (cargoPackingExists) {
-      return res.status(400).json({ error: 'Cargo packing already exists.' });
-    }
+    // if (cargoPackingExists) {
+    //   return res.status(400).json({ error: 'Cargo packing already exists.' });
+    // }
     const dueCargoPacking = await CargoPacking.findOne({
       where: { customer_id: req.body.customer_id, is_paid: false },
       include: [
