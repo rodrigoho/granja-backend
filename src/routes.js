@@ -4,7 +4,7 @@ import multerConfig from './config/multer';
 
 import UserController from './app/controllers/UserController';
 import CustomerController from './app/controllers/CustomerController';
-import EggController from './app/controllers/EggController';
+import EggPriceController from './app/controllers/EggPriceController';
 import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import NotificationController from './app/controllers/NotificationController';
@@ -35,12 +35,13 @@ routes.post('/additional-fee', AdditionaFeeController.store);
 routes.get('/additional-fee', AdditionaFeeController.index);
 routes.put('/additional-fee/:id', AdditionaFeeController.update);
 
-routes.get('/red-eggs', EggController.indexRed);
-routes.get('/white-eggs', EggController.indexWhite);
-routes.get('/eggs', EggController.index);
-routes.get('/eggs/:id', EggController.filteredIndex);
-routes.post('/eggs', EggController.store);
-routes.put('/eggs', EggController.update);
+routes.get('/red-eggs', EggPriceController.indexRed);
+routes.get('/white-eggs/:selected_date', EggPriceController.indexWhite);
+// routes.get('/white-eggs/:selected_date', EggPriceController.indexWhite);
+routes.get('/eggs', EggPriceController.index);
+routes.get('/eggs/:id', EggPriceController.filteredIndex);
+routes.post('/eggs', EggPriceController.createOrUpdate);
+routes.put('/eggs', EggPriceController.update);
 
 routes.get('/cargo-packing', CargoPackingController.indexAll);
 routes.get('/cargo-packing/:id', CargoPackingController.filteredById);

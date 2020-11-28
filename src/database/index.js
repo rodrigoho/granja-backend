@@ -8,6 +8,7 @@ import CargoPacking from '../app/models/CargoPacking';
 import Customer from '../app/models/Customer';
 import Egg from '../app/models/Egg';
 import OrderItem from '../app/models/OrderItem';
+import EggPrice from '../app/models/EggPrice';
 import AdditionalFee from '../app/models/AdditionalFee';
 import IntermediaryCustomer from '../app/models/IntermediaryCustomer';
 import Notification from '../app/models/Notification';
@@ -28,6 +29,7 @@ const models = [
   AdditionalFee,
   IntermediaryCustomer,
   Notification,
+  EggPrice,
 ];
 
 class Database {

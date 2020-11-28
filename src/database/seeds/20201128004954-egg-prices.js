@@ -1,0 +1,106 @@
+module.exports = {
+  up: async (queryInterface) => {
+    return queryInterface.bulkInsert('egg_prices', [
+      {
+        id: 1,
+        egg_id_price: 1,
+        price: 100.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 2,
+        egg_id_price: 2,
+        price: 90.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 3,
+        egg_id_price: 3,
+        price: 80.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 4,
+        egg_id_price: 4,
+        price: 70.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 5,
+        egg_id_price: 5,
+        price: 60.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 6,
+        egg_id_price: 6,
+        price: 50,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 7,
+        egg_id_price: 7,
+        price: 110.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 8,
+        egg_id_price: 8,
+        price: 100.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 9,
+        egg_id_price: 9,
+        price: 90.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 10,
+        egg_id_price: 10,
+        price: 80.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 11,
+        egg_id_price: 11,
+        price: 70.0,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: 12,
+        egg_id_price: 12,
+        price: 60,
+        price_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ]);
+  },
+
+  down: async (queryInterface) => {
+    return queryInterface.bulkDelete('egg_prices', null, {});
+  },
+};

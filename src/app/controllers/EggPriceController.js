@@ -1,48 +1,69 @@
 import * as Yup from 'yup';
 import Egg from '../models/Egg';
+import EggPrice from '../models/EggPrice';
 import User from '../models/User';
 
-class EggController {
-  async store(req, res) {
-    const schema = Yup.object().shape({
-      color: Yup.string().required(),
-      size: Yup.string().required(),
-      price: Yup.number().required(),
-    });
+const { Op } = require('sequelize');
 
+class EggPriceController {
+  async createOrUpdate(req, res) {
+    const schema = Yup.object().shape({
+      egg_id_price: Yup.number().required(),
+      price: Yup.number().required(),
+      last_edited_by_user_id: Yup.number().required(),
+      price_date: Yup.date().required(),
+    });
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    const eggExists = await Egg.findOne({
+    const datePriceExists = await EggPrice.findOne({
       where: {
-        size: req.body.size,
-        color: req.body.color,
+        egg_id_price: req.body.egg_id_price,
+        price_date: req.body.price_date,
       },
     });
 
-    if (eggExists) {
-      return res.status(400).json({ error: 'Egg already exists.' });
+    console.log('opa');
+
+    if (datePriceExists) {
+      const { price } = req.body;
+      const formattedPrice = parseFloat(price).toFixed(2);
+      const updatedEgg = {
+        price: formattedPrice,
+        last_edited_by_user_id: req.userId,
+      };
+      const { id } = await datePriceExists.update(updatedEgg);
+
+      return res.json({
+        id,
+        price,
+        last_edited_by_user_id: req.userId,
+      });
     }
 
-    const { id, color, size, price, last_edited_by_user_id } = await Egg.create(
-      {
-        ...req.body,
-        price: parseFloat(req.body.price).toFixed(2),
-        last_edited_by_user_id: req.userId,
-      }
-    );
+    console.log('uepa');
+    const {
+      id,
+      egg_id_price,
+      price,
+      last_edited_by_user_id,
+      price_date,
+    } = await EggPrice.create({
+      ...req.body,
+      price: parseFloat(req.body.price).toFixed(2),
+    });
 
     return res.json({
       id,
-      color,
-      size,
+      egg_id_price,
       price,
       last_edited_by_user_id,
+      price_date,
     });
   }
 
   async index(req, res) {
-    const eggs = await Egg.findAll({
+    const eggs = await EggPrice.findAll({
       order: [['price', 'DESC']],
       include: [
         {
@@ -57,16 +78,24 @@ class EggController {
   }
 
   async indexWhite(req, res) {
-    const whiteEggs = await Egg.findAll({
+    const whiteEggs = await EggPrice.findAll({
       order: [['price', 'DESC']],
       where: {
-        color: 'Branco',
+        [Op.or]: [
+          { id: 1 },
+          { id: 2 },
+          { id: 3 },
+          { id: 4 },
+          { id: 5 },
+          { id: 6 },
+        ],
+        // price_date: req.params.selected_date,
       },
       include: [
         {
-          model: User,
-          as: 'edited_by_user',
-          attributes: ['name', 'email'],
+          model: Egg,
+          as: 'egg',
+          attributes: ['size'],
         },
       ],
     });
@@ -75,16 +104,23 @@ class EggController {
   }
 
   async indexRed(req, res) {
-    const redEggs = await Egg.findAll({
+    const redEggs = await EggPrice.findAll({
       order: [['price', 'DESC']],
       where: {
-        color: 'Vermelho',
+        [Op.or]: [
+          { id: 7 },
+          { id: 8 },
+          { id: 9 },
+          { id: 10 },
+          { id: 11 },
+          { id: 12 },
+        ],
       },
       include: [
         {
-          model: User,
-          as: 'edited_by_user',
-          attributes: ['name', 'email'],
+          model: Egg,
+          as: 'egg',
+          attributes: ['size'],
         },
       ],
     });
@@ -100,7 +136,7 @@ class EggController {
     Object.keys(query).forEach((key) => {
       if (!filterTypes.includes(key)) delete query[key];
     });
-    const eggs = await Egg.findByPk(req.params.id, {
+    const eggs = await EggPrice.findByPk(req.params.id, {
       include: [
         {
           model: User,
@@ -132,14 +168,14 @@ class EggController {
     // }
 
     const { price } = req.body;
-    const egg = await Egg.findByPk(req.body.id);
+    const egg = await EggPrice.findByPk(req.body.id);
     const formattedPrice = parseFloat(price).toFixed(2);
     const updatedEgg = {
       price: formattedPrice,
       last_edited_by_user_id: req.userId,
     };
 
-    const { id } = await egg.update(updatedEgg);
+    const { id } = await eggPrice.update(updatedEgg);
 
     return res.json({
       id,
@@ -149,4 +185,4 @@ class EggController {
   }
 }
 
-export default new EggController();
+export default new EggPriceController();
