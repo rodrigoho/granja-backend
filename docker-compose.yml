@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:10
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=granja
+      - POSTGRES_PASSWORD=qwe123
+      - POSTGRES_DB=granja
+  app:
+    build: .
+    ports:
+      - 3333:3333
+    volumes:
+      - .:/opt/granja
+    environment:
+      - DB_HOST=db
+      - DB_USER=granja
+      - DB_PASS=qwe123
+      - DB_NAME=granja
+    depends_on:
+      - db
+
+volumes:
+  data:
