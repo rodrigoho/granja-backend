@@ -361,7 +361,7 @@ class CargoPackingController {
       eggs_cargo: Yup.array(),
       has_insurance_fee: Yup.boolean(),
       customer_id: Yup.number().required(),
-      created_by_user_id: Yup.number().required(),
+      // created_by_user_id: Yup.number().required(),
       receipt_number: Yup.number().required(),
       receipt_value: Yup.number().required(),
     });

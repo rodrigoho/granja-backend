@@ -9,11 +9,12 @@ import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import NotificationController from './app/controllers/NotificationController';
 
-import authMiddleware from './app/middlewares/auth';
+// import authMiddleware from './app/middlewares/auth';
 import CargoPackingController from './app/controllers/CargoPackingController';
 import AdditionaFeeController from './app/controllers/AdditionaFeeController';
 
 import IntermediaryCustomerController from './app/controllers/IntermediaryCustomerController';
+import EggPricesController from './app/controllers/EggPricesController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -40,7 +41,10 @@ routes.get('/white-eggs', EggController.indexWhite);
 routes.get('/eggs', EggController.index);
 routes.get('/eggs/:id', EggController.filteredIndex);
 routes.post('/eggs', EggController.store);
-routes.put('/eggs', EggController.update);
+routes.put('/eggs/:id', EggController.update);
+
+routes.get(`/eggs-prices/`, EggPricesController.index);
+routes.post(`/eggs-prices-selected/`, EggPricesController.indexSelected);
 
 routes.get('/cargo-packing', CargoPackingController.indexAll);
 routes.get('/cargo-packing/:id', CargoPackingController.filteredById);
