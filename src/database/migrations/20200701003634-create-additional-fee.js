@@ -15,6 +15,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      min_fee: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      max_fee: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
       last_edited_by_user_id: {
         type: Sequelize.INTEGER,
         allowNull: true,

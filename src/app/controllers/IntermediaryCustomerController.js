@@ -6,7 +6,6 @@ class IntermediaryCustomerController {
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      phone: Yup.string().required(),
       city: Yup.string().required(),
       state: Yup.string().required(),
     });
@@ -14,15 +13,15 @@ class IntermediaryCustomerController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    const intermediaryCustomerExists = await IntermediaryCustomer.findOne({
-      where: { phone: req.body.phone },
-    });
+    // const intermediaryCustomerExists = await IntermediaryCustomer.findOne({
+    //   where: { phone: req.body.phone },
+    // });
 
-    if (intermediaryCustomerExists) {
-      return res
-        .status(400)
-        .json({ error: 'Já existe um intermediário com esse Telefone.' });
-    }
+    // if (intermediaryCustomerExists) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: 'Já existe um intermediário com esse Telefone.' });
+    // }
     const { customers } = req.body;
     const {
       id,
@@ -62,10 +61,12 @@ class IntermediaryCustomerController {
   }
 
   async index(req, res) {
-    // const { page = 1 } = req.query;
+    const { page = 1 } = req.query;
 
-    const intermediaryCustomers = await IntermediaryCustomer.findAll({
+    const intermediaryCustomers = await IntermediaryCustomer.findAndCountAll({
       order: [['name', 'ASC']],
+      limit: 10,
+      offset: (page - 1) * 10,
       // limit: 15,
       // offset: (page - 1) * 15,
     });
@@ -131,6 +132,19 @@ class IntermediaryCustomerController {
     // });
 
     // return res.status(403).send({ error: 'Erro ao trocar a senha' });
+  }
+
+  async delete(req, res) {
+    const intermediaryCustomer = await IntermediaryCustomer.findByPk(
+      req.params.id
+    );
+
+    await IntermediaryCustomer.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    return res.json(intermediaryCustomer);
   }
 }
 export default new IntermediaryCustomerController();

@@ -13,7 +13,7 @@ class CargoPackingController {
 
     const cargoPackings = await CargoPacking.findAndCountAll({
       limit: 9,
-      offset: (page - 1) * 9,
+      offset: (page - 1) * 8,
       order: [['due_to', 'ASC']],
       attributes: [
         'id',
@@ -22,6 +22,11 @@ class CargoPackingController {
         'has_insurance_fee',
         'receipt_number',
         'customer_id',
+        'created_at',
+        'custom_date',
+        'total_price',
+        'paid_amount',
+        'custom_date_timestamp',
       ],
       include: [
         {
@@ -73,6 +78,10 @@ class CargoPackingController {
         'created_at',
         'updated_by_user_id',
         'customer_id',
+        'custom_date',
+        'total_price',
+        'paid_amount',
+        'is_billet',
       ],
       include: [
         {
@@ -89,11 +98,13 @@ class CargoPackingController {
           model: Customer,
           as: 'customer',
           attributes: ['name', 'address'],
+          paranoid: false,
         },
         {
           model: IntermediaryCustomer,
           as: 'intermediary',
           attributes: ['name', 'phone'],
+          paranoid: false,
         },
         {
           model: OrderItem,
@@ -103,7 +114,7 @@ class CargoPackingController {
             {
               model: Egg,
               as: 'egg_details',
-              attributes: ['color', 'size'],
+              attributes: ['color', 'size', 'id'],
             },
           ],
         },
@@ -119,6 +130,7 @@ class CargoPackingController {
       egg_tray_price: eggTrayPrice,
       egg_retail_box_amount: eggRetailBoxAmount,
       egg_retail_box_price: eggRetailBoxPrice,
+      paid_amount: paidAmount,
     } = cargoPacking;
 
     const totalBoxesAmount = orderItems.reduce(
@@ -169,6 +181,7 @@ class CargoPackingController {
         ruralFundFee,
         eggTrayValue,
         eggRetailBoxValue,
+        paidAmount,
       },
     });
   }
@@ -231,7 +244,7 @@ class CargoPackingController {
             {
               model: Egg,
               as: 'egg_details',
-              attributes: ['color', 'size'],
+              attributes: ['color', 'size', 'id'],
             },
           ],
         },
@@ -330,6 +343,7 @@ class CargoPackingController {
         'created_by_user_id',
         'updated_by_user_id',
         'customer_id',
+        'total_price',
       ],
       include: [
         {
@@ -340,7 +354,7 @@ class CargoPackingController {
             {
               model: Egg,
               as: 'egg_details',
-              attributes: ['color', 'size'],
+              attributes: ['color', 'size', 'id'],
             },
           ],
         },
@@ -362,11 +376,11 @@ class CargoPackingController {
       has_insurance_fee: Yup.boolean(),
       customer_id: Yup.number().required(),
       // created_by_user_id: Yup.number().required(),
-      receipt_number: Yup.number().required(),
-      receipt_value: Yup.number().required(),
+      // receipt_number: Yup.number().required(),
+      // receipt_value: Yup.number().required(),
     });
 
-    let eligibeForAnalysis = false;
+    const eligibeForAnalysis = false;
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
@@ -378,29 +392,30 @@ class CargoPackingController {
     // if (cargoPackingExists) {
     //   return res.status(400).json({ error: 'Cargo packing already exists.' });
     // }
-    const dueCargoPacking = await CargoPacking.findOne({
-      where: { customer_id: req.body.customer_id, is_paid: false },
-      include: [
-        {
-          model: Customer,
-          as: 'customer',
-          attributes: ['name'],
-        },
-      ],
-    });
+    // const dueCargoPacking = await CargoPacking.findOne({
+    //   where: { customer_id: req.body.customer_id, is_paid: false },
+    //   include: [
+    //     {
+    //       model: Customer,
+    //       as: 'customer',
+    //       attributes: ['name'],
+    //     },
+    //   ],
+    // });
 
-    if (dueCargoPacking) {
-      eligibeForAnalysis = true;
-    }
+    // if (dueCargoPacking) {
+    //   eligibeForAnalysis = true;
+    // }
 
     const {
-      id,
       is_paid,
       eggs_cargo,
       created_by_user_id,
       updated_by_user_id,
       has_insurance_fee,
       discount,
+      custom_date,
+      custom_date_timestamp,
       rural_fund_tax,
       icms_tax,
       egg_tray_amount,
@@ -412,11 +427,15 @@ class CargoPackingController {
       intermediary_id,
       receipt_value,
       receipt_number,
+      is_billet,
+      paid_amount,
     } = req.body;
 
     const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
     const decimalEggBoxPrice = parseFloat(egg_retail_box_price).toFixed(2);
-    const decimalReceitpValue = parseFloat(receipt_value).toFixed(2);
+    const decimalReceitpValue = receipt_value
+      ? parseFloat(receipt_value).toFixed(2)
+      : 0;
 
     const discountToSave = discount || 0;
     const ruralFundTaxToSave = rural_fund_tax || 0;
@@ -425,11 +444,66 @@ class CargoPackingController {
     const eggTrayPrice = decimalEggTrayPrice || 0;
     const eggRetailBoxAmount = egg_retail_box_amount || 0;
     const eggRetailBoxPrice = decimalEggBoxPrice || 0;
+    // const totalPrice = total_price || 0;
+    const amountPaid = paid_amount || 0;
 
-    await CargoPacking.create({
+    const totalBoxesAmount = eggs_cargo.reduce(
+      (acc, egg) => acc + parseFloat(egg.amount),
+      0
+    );
+
+    console.log(
+      `::::::::::::::::::::::::::::::::: \n\n ${JSON.stringify(
+        totalBoxesAmount
+      )} totalBoxesAmount \n\n ::::::::::::::::::::::::::::::::::`
+    );
+
+    const totalEggsCargoPrice = +eggs_cargo
+      .reduce((acc, egg) => acc + (egg.eggPrice - egg.discount) * egg.amount, 0)
+      .toFixed(2);
+
+    console.log(
+      `::::::::::::::::::::::::::::::::: \n\n ${JSON.stringify(
+        totalEggsCargoPrice
+      )} totalEggsCargoPrice \n\n ::::::::::::::::::::::::::::::::::`
+    );
+
+    const insurancePrice = has_insurance_fee
+      ? +((totalEggsCargoPrice / 0.85) * 0.01).toFixed(2)
+      : 0;
+
+    const icmsFee = +(totalBoxesAmount * icmsToSave * 0.07).toFixed(2);
+
+    const ruralFundFee = rural_fund_tax
+      ? +(decimalReceitpValue * rural_fund_tax * 0.01).toFixed(2)
+      : 0;
+    // lembrar de checar o totalEggsCargoPrice, era receipt_value
+    console.log(ruralFundFee);
+    const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
+    const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+    // const decimalTotalEggsCargoPrice = parseFloat(totalEggsCargoPrice).toFixed(
+    //   2
+    // );
+
+    const balanceDue = +(
+      totalEggsCargoPrice +
+      icmsFee +
+      insurancePrice -
+      ruralFundFee +
+      eggTrayValue +
+      eggRetailBoxValue
+    ).toFixed(2);
+
+    console.log(`icmsToSave${icmsToSave}`);
+    console.log(`balanceDue${balanceDue}`);
+    console.log(`icmsFee${icmsFee}`);
+
+    const currentCargoPacking = await CargoPacking.create({
       is_paid,
       has_insurance_fee,
       due_to,
+      custom_date,
+      custom_date_timestamp,
       eligible_for_analysis: eligibeForAnalysis,
       customer_id,
       intermediary_id,
@@ -444,25 +518,22 @@ class CargoPackingController {
       updated_by_user_id,
       receipt_value: decimalReceitpValue,
       receipt_number,
+      total_price: balanceDue,
+      paid_amount: amountPaid,
+      is_billet,
     });
 
-    const currentCargoPacking = await CargoPacking.findOne({
-      where: { receipt_number: req.body.receipt_number },
-    });
+    const { id } = currentCargoPacking;
 
     eggs_cargo.forEach(async (egg) => {
       try {
-        const currentEgg = await Egg.findOne({
-          where: { color: egg.color, size: egg.size },
-          // where: { id: egg.egg_id },
-        });
         if (egg.amount > 0)
           await OrderItem.create({
             cargo_packing_id: currentCargoPacking.id,
-            egg_id: currentEgg.id,
+            egg_id: egg.eggId,
             amount: egg.amount,
             discount: egg.discount,
-            cur_egg_price: currentEgg.price,
+            cur_egg_price: egg.eggPrice,
           });
       } catch (err) {
         console.log(err);
@@ -478,6 +549,8 @@ class CargoPackingController {
       eligible_for_analysis: eligibeForAnalysis,
       eggs_cargo,
       due_to,
+      custom_date,
+      is_billet,
       customer_id,
       created_by_user_id,
       updated_by_user_id,
@@ -492,8 +565,6 @@ class CargoPackingController {
       due_to: Yup.date().required(),
       eggs_cargo: Yup.array(),
       has_insurance_fee: Yup.boolean(),
-      receipt_number: Yup.number().required(),
-      receipt_value: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -515,6 +586,7 @@ class CargoPackingController {
       receipt_value,
       receipt_number,
       created_by_user_id,
+      paid_amount,
     } = req.body;
     const cargoPacking = await CargoPacking.findByPk(req.params.id);
 
@@ -527,6 +599,7 @@ class CargoPackingController {
       receipt_number,
       created_by_user_id,
       updated_by_user_id: req.userId,
+      paid_amount,
     };
 
     eggs_cargo.forEach(async (egg) => {
@@ -570,16 +643,23 @@ class CargoPackingController {
     });
   }
 
+  // esse que ta usando
   async indexDue(req, res) {
-    const { page = 1 } = req.query;
+    const {
+      page = 1,
+      sort_direction: sortDirection = 'ASC',
+      column_to_sort: columnToSort = 'due_to',
+    } = req.query;
+
+    console.log(req.query, sortDirection, columnToSort);
 
     const dueCargoPackings = await CargoPacking.findAndCountAll({
       where: {
         is_paid: false,
       },
-      limit: 9,
-      offset: (page - 1) * 9,
-      order: [['due_to', 'ASC']],
+      limit: 10,
+      offset: (page - 1) * 10,
+      order: [[columnToSort, sortDirection]],
       attributes: [
         'id',
         'is_paid',
@@ -587,17 +667,24 @@ class CargoPackingController {
         'has_insurance_fee',
         'receipt_number',
         'customer_id',
+        'created_at',
+        'custom_date',
+        'total_price',
+        'paid_amount',
+        'custom_date_timestamp',
       ],
       include: [
         {
           model: Customer,
           as: 'customer',
           attributes: ['name'],
+          paranoid: false,
         },
         {
           model: IntermediaryCustomer,
           as: 'intermediary',
           attributes: ['name', 'email', 'phone'],
+          paranoid: false,
         },
       ],
     });
@@ -613,7 +700,7 @@ class CargoPackingController {
         is_paid: true,
       },
       limit: 9,
-      offset: (page - 1) * 9,
+      offset: (page - 1) * 8,
       order: [['due_to', 'ASC']],
       attributes: [
         'id',
@@ -643,7 +730,7 @@ class CargoPackingController {
         eligible_for_analysis: true,
       },
       limit: 9,
-      offset: (page - 1) * 9,
+      offset: (page - 1) * 8,
       order: [['due_to', 'ASC']],
       attributes: [
         'id',
@@ -663,6 +750,25 @@ class CargoPackingController {
     });
 
     return res.json(analysisCargoPackings);
+  }
+
+  async delete(req, res) {
+    const cargoPacking = await CargoPacking.findByPk(req.params.id);
+
+    // const { is_admin: isAdmin } = await User.findByPk(req.userId);
+
+    // if (!isAdmin) {
+    //   return res
+    //     .status(401)
+    //     .json({ error: `You need admin privilege to edit a CargoPacking` });
+    // }
+
+    await CargoPacking.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    return res.json(cargoPacking);
   }
 }
 

@@ -22,9 +22,15 @@ class CargoPacking extends Model {
         receipt_number: Sequelize.INTEGER,
         eligible_for_analysis: Sequelize.BOOLEAN,
         receipt_value: Sequelize.DECIMAL,
+        custom_date: Sequelize.STRING,
+        custom_date_timestamp: Sequelize.DATE,
+        total_price: Sequelize.DECIMAL,
+        paid_amount: Sequelize.DECIMAL,
+        is_billet: Sequelize.BOOLEAN,
       },
       {
         sequelize,
+        paranoid: true,
       }
     );
 

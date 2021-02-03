@@ -43,7 +43,7 @@ routes.get('/eggs/:id', EggController.filteredIndex);
 routes.post('/eggs', EggController.store);
 routes.put('/eggs/:id', EggController.update);
 
-routes.get(`/eggs-prices/`, EggPricesController.index);
+// routes.get(`/eggs-prices/`, EggPricesController.index);
 routes.post(`/eggs-prices-selected/`, EggPricesController.indexSelected);
 
 routes.get('/cargo-packing', CargoPackingController.indexAll);
@@ -58,6 +58,7 @@ routes.get(
   '/analysis-cargo-packing',
   CargoPackingController.indexAnalysisCargoPackings
 );
+routes.delete('/cargo-packing/:id', CargoPackingController.delete);
 
 routes.get('/users', UserController.index);
 routes.get('/user/:id', UserController.indexById);
@@ -68,6 +69,7 @@ routes.post('/intermediaries', IntermediaryCustomerController.store);
 routes.get('/intermediaries', IntermediaryCustomerController.index);
 routes.get('/intermediary/:id', IntermediaryCustomerController.indexById);
 routes.put('/intermediary/:id', IntermediaryCustomerController.update);
+routes.delete('/intermediary/:id', IntermediaryCustomerController.delete);
 
 routes.post('/notifications', NotificationController.store);
 routes.get('/notifications', NotificationController.index);

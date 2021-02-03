@@ -17,6 +17,7 @@ class Customer extends Model {
       },
       {
         sequelize,
+        paranoid: true,
       }
     );
 

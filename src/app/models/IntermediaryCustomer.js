@@ -12,6 +12,7 @@ class IntermediaryCustomer extends Model {
       },
       {
         sequelize,
+        paranoid: true,
       }
     );
 
