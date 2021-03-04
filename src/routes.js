@@ -26,6 +26,7 @@ routes.post('/users', UserController.store);
 // routes.use(authMiddleware);
 
 routes.get('/customers', CustomerController.index);
+routes.get('/customers-all', CustomerController.indexAll);
 routes.get('/customers/:id', CustomerController.filteredById);
 routes.get('/non-related-customers', CustomerController.indexNonRelated);
 routes.post('/customers', CustomerController.store);
@@ -67,6 +68,7 @@ routes.put('/user/:id', UserController.update);
 
 routes.post('/intermediaries', IntermediaryCustomerController.store);
 routes.get('/intermediaries', IntermediaryCustomerController.index);
+routes.get('/intermediaries', IntermediaryCustomerController.indexAll);
 routes.get('/intermediary/:id', IntermediaryCustomerController.indexById);
 routes.put('/intermediary/:id', IntermediaryCustomerController.update);
 routes.delete('/intermediary/:id', IntermediaryCustomerController.delete);

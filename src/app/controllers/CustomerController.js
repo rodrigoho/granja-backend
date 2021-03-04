@@ -71,6 +71,14 @@ class CustomerController {
     return res.json(customers);
   }
 
+  async indexAll(req, res) {
+    const allCustomers = await Customer.findAll({
+      order: [['name', 'ASC']],
+    });
+
+    return res.json(allCustomers);
+  }
+
   async indexNonRelated(req, res) {
     const customers = await Customer.findAndCountAll({
       where: { intermediary_id: null },

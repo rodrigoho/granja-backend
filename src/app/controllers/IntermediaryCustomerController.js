@@ -74,6 +74,14 @@ class IntermediaryCustomerController {
     return res.json(intermediaryCustomers);
   }
 
+  async indexAll(req, res) {
+    const allIntermediaryCustomers = await IntermediaryCustomer.findAll({
+      order: [['name', 'ASC']],
+    });
+
+    return res.json(allIntermediaryCustomers);
+  }
+
   async indexById(req, res) {
     const intermediaryCustomers = await IntermediaryCustomer.findByPk(
       req.params.id
