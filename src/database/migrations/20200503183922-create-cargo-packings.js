@@ -62,11 +62,11 @@ module.exports = {
       },
       receipt_value: {
         type: Sequelize.DECIMAL,
-        allowNull: false,
+        allowNull: true,
       },
       receipt_number: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         unique: true,
       },
       created_by_user_id: {

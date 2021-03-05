@@ -9,11 +9,12 @@ import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import NotificationController from './app/controllers/NotificationController';
 
-import authMiddleware from './app/middlewares/auth';
+// import authMiddleware from './app/middlewares/auth';
 import CargoPackingController from './app/controllers/CargoPackingController';
 import AdditionaFeeController from './app/controllers/AdditionaFeeController';
 
 import IntermediaryCustomerController from './app/controllers/IntermediaryCustomerController';
+import EggPricesController from './app/controllers/EggPricesController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -25,6 +26,7 @@ routes.post('/users', UserController.store);
 // routes.use(authMiddleware);
 
 routes.get('/customers', CustomerController.index);
+routes.get('/customers-all', CustomerController.indexAll);
 routes.get('/customers/:id', CustomerController.filteredById);
 routes.get('/non-related-customers', CustomerController.indexNonRelated);
 routes.post('/customers', CustomerController.store);
@@ -40,7 +42,10 @@ routes.get('/white-eggs', EggController.indexWhite);
 routes.get('/eggs', EggController.index);
 routes.get('/eggs/:id', EggController.filteredIndex);
 routes.post('/eggs', EggController.store);
-routes.put('/eggs', EggController.update);
+routes.put('/eggs/:id', EggController.update);
+
+// routes.get(`/eggs-prices/`, EggPricesController.index);
+routes.post(`/eggs-prices-selected/`, EggPricesController.indexSelected);
 
 routes.get('/cargo-packing', CargoPackingController.indexAll);
 routes.get('/cargo-packing/:id', CargoPackingController.filteredById);
@@ -54,6 +59,7 @@ routes.get(
   '/analysis-cargo-packing',
   CargoPackingController.indexAnalysisCargoPackings
 );
+routes.delete('/cargo-packing/:id', CargoPackingController.delete);
 
 routes.get('/users', UserController.index);
 routes.get('/user/:id', UserController.indexById);
@@ -62,8 +68,10 @@ routes.put('/user/:id', UserController.update);
 
 routes.post('/intermediaries', IntermediaryCustomerController.store);
 routes.get('/intermediaries', IntermediaryCustomerController.index);
+routes.get('/intermediaries', IntermediaryCustomerController.indexAll);
 routes.get('/intermediary/:id', IntermediaryCustomerController.indexById);
 routes.put('/intermediary/:id', IntermediaryCustomerController.update);
+routes.delete('/intermediary/:id', IntermediaryCustomerController.delete);
 
 routes.post('/notifications', NotificationController.store);
 routes.get('/notifications', NotificationController.index);

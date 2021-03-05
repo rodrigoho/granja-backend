@@ -1,11 +1,14 @@
 import * as Yup from 'yup';
 import AdditionalFee from '../models/AdditionalFee';
+import Egg from '../models/Egg';
 // import User from '../models/User';
 
 class AdditionalFeeController {
   async store(req, res) {
     const schema = Yup.object().shape({
       current_fee_price: Yup.number().required(),
+      max_fee: Yup.number().required(),
+      min_fee: Yup.number().required(),
       online_fee: Yup.string().required(),
     });
 
@@ -49,12 +52,34 @@ class AdditionalFeeController {
     const additionalFee = await AdditionalFee.findByPk(req.params.id);
 
     const updatedAdditionalFee = {
+      ...additionalFee,
       current_fee_price,
       online_fee,
       last_edited_by_user_id: req.userId,
     };
 
     const { id } = await additionalFee.update(updatedAdditionalFee);
+
+    // for (let i = 7; i <= 12; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    // const eggToUpdate = await Egg.findByPk(7);
+    // console.log(JSON.stringify(eggToUpdate));
+    // const formattedPrice = parseFloat(eggToUpdate.price);
+    // const formattedRedEggsTax = parseFloat(current_fee_price);
+    // console.log('\n\n\n\n\n');
+    // console.log(typeof formattedPrice);
+    // console.log(typeof formattedRedEggsTax);
+    // console.log('\n\n\n\n\n');
+
+    // const newPrice = formattedPrice + formattedRedEggsTax;
+    // const egg = {
+    //   ...eggToUpdate,
+    //   price: newPrice,
+    //   last_edited_by_user_id: req.userId,
+    // };
+    // console.log(eggToUpdate);
+    // eggToUpdate.update(egg);
+    // }
 
     return res.json({
       id,

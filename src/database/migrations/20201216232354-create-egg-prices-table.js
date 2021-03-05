@@ -1,31 +1,25 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('additional_fees', {
+    queryInterface.createTable('egg_prices', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      current_fee_price: {
+      egg_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'eggs', key: 'id' },
+        onDelete: 'SET NULL',
+        allowNull: true,
+      },
+      cur_egg_price: {
         type: Sequelize.DECIMAL,
         allowNull: false,
       },
-      online_fee: {
+      price_date: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      min_fee: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
-      },
-      max_fee: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
-      },
-      last_edited_by_user_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -36,5 +30,5 @@ module.exports = {
         allowNull: false,
       },
     }),
-  down: (queryInterface) => queryInterface.dropTable('additional_fees'),
+  down: (queryInterface) => queryInterface.dropTable('egg_prices'),
 };

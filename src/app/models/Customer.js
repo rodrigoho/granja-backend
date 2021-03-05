@@ -10,7 +10,6 @@ class Customer extends Model {
         phone: Sequelize.STRING,
         email: Sequelize.STRING,
         discount: Sequelize.DECIMAL,
-        red_egg_tax: Sequelize.DECIMAL,
         rural_fund_tax: Sequelize.DECIMAL,
         icms_tax: Sequelize.DECIMAL,
         zip_code: Sequelize.STRING,
@@ -18,6 +17,7 @@ class Customer extends Model {
       },
       {
         sequelize,
+        paranoid: true,
       }
     );
 

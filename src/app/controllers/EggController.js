@@ -1,6 +1,8 @@
 import * as Yup from 'yup';
+import { format } from 'date-fns';
 import Egg from '../models/Egg';
 import User from '../models/User';
+import EggPrices from '../models/EggPrices';
 
 class EggController {
   async store(req, res) {
@@ -132,17 +134,44 @@ class EggController {
     // }
 
     const { price } = req.body;
-    const egg = await Egg.findByPk(req.body.id);
+    const egg = await Egg.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
     const formattedPrice = parseFloat(price).toFixed(2);
     const updatedEgg = {
       price: formattedPrice,
       last_edited_by_user_id: req.userId,
     };
+    await egg.update(updatedEgg);
+    const newDate = format(new Date(), 'dd/MM/yyyy');
 
-    const { id } = await egg.update(updatedEgg);
+    const eggPriceToSave = await EggPrices.findOne({
+      where: {
+        egg_id: req.params.id,
+        price_date: newDate,
+      },
+    });
+
+    if (eggPriceToSave) {
+      const updatedEggPrice = {
+        egg_id: req.params.id,
+        cur_egg_price: formattedPrice,
+        price_date: newDate,
+      };
+
+      await eggPriceToSave.update(updatedEggPrice);
+    } else {
+      await EggPrices.create({
+        egg_id: req.params.id,
+        price_date: newDate,
+        cur_egg_price: formattedPrice,
+      });
+    }
 
     return res.json({
-      id,
+      id: req.params.id,
       price,
       last_edited_by_user_id: req.userId,
     });
