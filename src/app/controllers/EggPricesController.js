@@ -43,36 +43,6 @@ class EggPricesController {
     });
   }
 
-  // async index(req, res) {
-  //   const eggs = await EggPrices.findAll({
-  //     order: [['price_date', 'DESC']],
-  //     where: { price_date: req.body.selected_date },
-  //     attributes: ['egg_id', 'price_date', 'cur_egg_price'],
-  //     include: [
-  //       {
-  //         model: Egg,
-  //         as: 'egg',
-  //         attributes: ['size', 'color'],
-  //       },
-  //     ],
-  //   });
-
-  //   // const eggsListArray = [];
-  //   const eggsList = eggs.map((egg) => {
-  //     const eggToAdd = {
-  //       eggId: egg.id,
-  //       color: egg.egg.color,
-  //       size: egg.egg.size,
-  //       price: egg.cur_egg_price,
-  //     };
-  //     // eggsListArray.push(eggToAdd);
-  //     return eggToAdd;
-  //   });
-  //   console.log('pré', eggsList);
-  //   // console.log(eggsListArray);
-  //   return res.json(eggsList);
-  // }
-
   async indexSelected(req, res) {
     const eggs = await EggPrices.findAll({
       order: [['price_date', 'DESC']],

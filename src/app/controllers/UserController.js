@@ -10,7 +10,6 @@ class UserController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      console.log(req.body);
       return res.status(400).json({ error: 'Validation fails' });
     }
     const userExists = await User.findOne({ where: { email: req.body.email } });
@@ -73,21 +72,12 @@ class UserController {
     } = req.body;
 
     const user = await User.findByPk(req.params.id);
-    console.log(user);
-    console.log('req.params.id', req.params);
-    console.log('oldPassword', oldPassword);
-    const test = await user.checkPassword(oldPassword);
-    console.log('check', test);
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
       return res.status(401).json({ error: 'Password does not match' });
     }
-    console.log(id);
-    console.log(loggedUserId);
 
     if (loggedUserId === id || isAdmin === 'true') {
-      console.log(`>>>>>>>>>`);
-      console.log(email, password);
       await user.update({
         email,
         password,
@@ -98,16 +88,6 @@ class UserController {
         password,
       });
     }
-
-    // const { name, avatar } = await User.findByPk(req.userId, {
-    //   include: [
-    //     {
-    //       model: File,
-    //       as: 'avatar',
-    //       attributes: ['id', 'path', 'url'],
-    //     },
-    //   ],
-    // });
 
     return res.status(403).send({ error: 'Erro ao trocar a senha' });
   }

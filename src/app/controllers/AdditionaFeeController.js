@@ -60,27 +60,6 @@ class AdditionalFeeController {
 
     const { id } = await additionalFee.update(updatedAdditionalFee);
 
-    // for (let i = 7; i <= 12; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    // const eggToUpdate = await Egg.findByPk(7);
-    // console.log(JSON.stringify(eggToUpdate));
-    // const formattedPrice = parseFloat(eggToUpdate.price);
-    // const formattedRedEggsTax = parseFloat(current_fee_price);
-    // console.log('\n\n\n\n\n');
-    // console.log(typeof formattedPrice);
-    // console.log(typeof formattedRedEggsTax);
-    // console.log('\n\n\n\n\n');
-
-    // const newPrice = formattedPrice + formattedRedEggsTax;
-    // const egg = {
-    //   ...eggToUpdate,
-    //   price: newPrice,
-    //   last_edited_by_user_id: req.userId,
-    // };
-    // console.log(eggToUpdate);
-    // eggToUpdate.update(egg);
-    // }
-
     return res.json({
       id,
       current_fee_price,

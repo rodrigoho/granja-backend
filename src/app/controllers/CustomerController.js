@@ -40,8 +40,6 @@ class CustomerController {
       address,
     } = await Customer.create(req.body);
 
-    console.log('não é aqui');
-
     return res.json({
       id,
       cnpj,
@@ -74,6 +72,7 @@ class CustomerController {
   async indexAll(req, res) {
     const allCustomers = await Customer.findAll({
       order: [['name', 'ASC']],
+      paranoid: false,
     });
 
     return res.json(allCustomers);

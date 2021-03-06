@@ -49,12 +49,12 @@ routes.post(`/eggs-prices-selected/`, EggPricesController.indexSelected);
 
 routes.get('/cargo-packing', CargoPackingController.indexAll);
 routes.get('/cargo-packing/:id', CargoPackingController.filteredById);
-routes.get('/cargo-packing-edit/:id', CargoPackingController.filteredSimple);
-routes.get('/cargo-packings/:id', CargoPackingController.filteredByCustomer);
+// routes.get('/cargo-packing-edit/:id', CargoPackingController.filteredSimple);
+// routes.get('/cargo-packings/:id', CargoPackingController.filteredByCustomer);
 routes.post('/cargo-packing', CargoPackingController.store);
 routes.put('/cargo-packing/:id', CargoPackingController.update);
-routes.get('/due-cargo-packing', CargoPackingController.indexDue);
-routes.get('/paid-cargo-packing', CargoPackingController.indexPaid);
+// routes.get('/due-cargo-packing', CargoPackingController.indexDue);
+// routes.get('/paid-cargo-packing', CargoPackingController.indexPaid);
 routes.get(
   '/analysis-cargo-packing',
   CargoPackingController.indexAnalysisCargoPackings
