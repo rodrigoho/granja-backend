@@ -402,6 +402,8 @@ class CargoPackingController {
     } = req.body;
     const cargoPacking = await CargoPacking.findByPk(req.params.id);
 
+    console.log(typeof receipt_value, receipt_value);
+
     const updatedCargoPacking = {
       id,
       eggs_cargo,
