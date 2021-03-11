@@ -404,6 +404,49 @@ class CargoPackingController {
 
     console.log(typeof receipt_value, receipt_value);
 
+    const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
+    const decimalEggBoxPrice = parseFloat(egg_retail_box_price).toFixed(2);
+    const decimalReceitpValue = receipt_value
+      ? parseFloat(receipt_value).toFixed(2)
+      : 0;
+
+    const icmsToSave = icms_tax || 0;
+    const eggTrayAmount = egg_tray_amount || 0;
+    const eggTrayPrice = decimalEggTrayPrice || 0;
+    const eggRetailBoxAmount = egg_retail_box_amount || 0;
+    const eggRetailBoxPrice = decimalEggBoxPrice || 0;
+
+    const totalBoxesAmount = eggs_cargo.reduce(
+      (acc, egg) => acc + parseFloat(egg.amount),
+      0
+    );
+
+    const totalEggsCargoPrice = +eggs_cargo
+      .reduce((acc, egg) => acc + (egg.eggPrice - egg.discount) * egg.amount, 0)
+      .toFixed(2);
+
+    const insurancePrice = has_insurance_fee
+      ? +((totalEggsCargoPrice / 0.85) * 0.01).toFixed(2)
+      : 0;
+
+    const icmsFee = +(totalBoxesAmount * icmsToSave * 0.07).toFixed(2);
+
+    const ruralFundFee = rural_fund_tax
+      ? +(decimalReceitpValue * rural_fund_tax * 0.01).toFixed(2)
+      : 0;
+
+    const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
+    const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+
+    const balanceDue = +(
+      totalEggsCargoPrice +
+      icmsFee +
+      insurancePrice -
+      ruralFundFee +
+      eggTrayValue +
+      eggRetailBoxValue
+    ).toFixed(2);
+
     const updatedCargoPacking = {
       id,
       eggs_cargo,
@@ -422,6 +465,7 @@ class CargoPackingController {
       created_by_user_id,
       updated_by_user_id: req.userId,
       paid_amount,
+      total_price: balanceDue,
     };
 
     eggs_cargo.forEach(async (egg) => {

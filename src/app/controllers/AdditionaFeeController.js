@@ -1,7 +1,5 @@
 import * as Yup from 'yup';
 import AdditionalFee from '../models/AdditionalFee';
-import Egg from '../models/Egg';
-// import User from '../models/User';
 
 class AdditionalFeeController {
   async store(req, res) {
@@ -48,11 +46,13 @@ class AdditionalFeeController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { current_fee_price, online_fee } = req.body;
+    const { current_fee_price, online_fee, min_fee, max_fee } = req.body;
     const additionalFee = await AdditionalFee.findByPk(req.params.id);
 
     const updatedAdditionalFee = {
       ...additionalFee,
+      min_fee,
+      max_fee,
       current_fee_price,
       online_fee,
       last_edited_by_user_id: req.userId,
