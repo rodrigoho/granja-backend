@@ -88,6 +88,8 @@ class CargoPackingController {
         'total_price',
         'paid_amount',
         'is_billet',
+        'payments',
+        'additional_fee',
       ],
       include: [
         {
@@ -253,6 +255,7 @@ class CargoPackingController {
       receipt_number,
       is_billet,
       paid_amount,
+      additional_fee,
     } = req.body;
 
     const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
@@ -325,6 +328,7 @@ class CargoPackingController {
       total_price: balanceDue,
       paid_amount: amountPaid,
       is_billet,
+      additional_fee,
     });
 
     const { id } = currentCargoPacking;
@@ -399,6 +403,8 @@ class CargoPackingController {
       receipt_number,
       created_by_user_id,
       paid_amount,
+      additional_fee,
+      payments,
     } = req.body;
     const cargoPacking = await CargoPacking.findByPk(req.params.id);
 
@@ -466,6 +472,8 @@ class CargoPackingController {
       updated_by_user_id: req.userId,
       paid_amount,
       total_price: balanceDue,
+      additional_fee,
+      payments,
     };
 
     eggs_cargo.forEach(async (egg) => {

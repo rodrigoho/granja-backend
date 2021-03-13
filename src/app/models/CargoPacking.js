@@ -27,6 +27,8 @@ class CargoPacking extends Model {
         total_price: Sequelize.DECIMAL,
         paid_amount: Sequelize.DECIMAL,
         is_billet: Sequelize.BOOLEAN,
+        additional_fee: Sequelize.DECIMAL,
+        payments: Sequelize.ARRAY(Sequelize.JSON),
       },
       {
         sequelize,
