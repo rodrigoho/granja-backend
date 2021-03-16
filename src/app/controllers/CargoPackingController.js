@@ -254,10 +254,14 @@ class CargoPackingController {
       receipt_value,
       receipt_number,
       is_billet,
-      paid_amount,
       additional_fee,
       payments,
     } = req.body;
+
+    const paidAmount = payments.reduce(
+      (acc = 0, payment) => acc + parseFloat(payment.paid_amount),
+      0
+    );
 
     const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
     const decimalEggBoxPrice = parseFloat(egg_retail_box_price).toFixed(2);
@@ -273,7 +277,6 @@ class CargoPackingController {
     const eggRetailBoxAmount = egg_retail_box_amount || 0;
     const eggRetailBoxPrice = decimalEggBoxPrice || 0;
     // const totalPrice = total_price || 0;
-    const amountPaid = paid_amount || 0;
 
     const totalBoxesAmount = eggs_cargo.reduce(
       (acc, egg) => acc + parseFloat(egg.amount),
@@ -327,7 +330,7 @@ class CargoPackingController {
       receipt_value: decimalReceitpValue,
       receipt_number,
       total_price: balanceDue,
-      paid_amount: amountPaid,
+      paid_amount: paidAmount,
       is_billet,
       additional_fee,
       payments,
@@ -404,13 +407,16 @@ class CargoPackingController {
       receipt_value,
       receipt_number,
       created_by_user_id,
-      paid_amount,
       additional_fee,
       payments,
     } = req.body;
-    const cargoPacking = await CargoPacking.findByPk(req.params.id);
 
-    console.log(typeof receipt_value, receipt_value);
+    const paidAmount = payments.reduce(
+      (acc = 0, payment) => acc + parseFloat(payment.paid_amount),
+      0
+    );
+
+    const cargoPacking = await CargoPacking.findByPk(req.params.id);
 
     const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
     const decimalEggBoxPrice = parseFloat(egg_retail_box_price).toFixed(2);
@@ -472,7 +478,7 @@ class CargoPackingController {
       receipt_number,
       created_by_user_id,
       updated_by_user_id: req.userId,
-      paid_amount,
+      paid_amount: paidAmount,
       total_price: balanceDue,
       additional_fee,
       payments,
