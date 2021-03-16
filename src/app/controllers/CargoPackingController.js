@@ -256,6 +256,7 @@ class CargoPackingController {
       is_billet,
       paid_amount,
       additional_fee,
+      payments,
     } = req.body;
 
     const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
@@ -329,6 +330,7 @@ class CargoPackingController {
       paid_amount: amountPaid,
       is_billet,
       additional_fee,
+      payments,
     });
 
     const { id } = currentCargoPacking;

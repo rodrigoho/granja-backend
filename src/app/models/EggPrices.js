@@ -7,7 +7,6 @@ class EggPrices extends Model {
         egg_id: Sequelize.INTEGER,
         cur_egg_price: Sequelize.DECIMAL,
         price_date: Sequelize.STRING,
-        additional_fee: Sequelize.DECIMAL,
       },
       {
         sequelize,
