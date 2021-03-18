@@ -345,7 +345,7 @@ class CargoPackingController {
             cargo_packing_id: currentCargoPacking.id,
             egg_id: egg.eggId,
             amount: egg.amount,
-            discount: egg.discount,
+            discount: parseInt(egg.discount, 2),
             cur_egg_price: egg.eggPrice,
           });
       } catch (err) {
@@ -499,14 +499,14 @@ class CargoPackingController {
         if (orderItemToUpdate) {
           await orderItemToUpdate.update({
             amount: egg.amount,
-            discount: egg.discount,
+            discount: parseInt(egg.discount, 2),
           });
         } else {
           await OrderItem.create({
             cargo_packing_id: req.params.id,
             egg_id: currentEgg.id,
             amount: egg.amount,
-            discount: egg.discount,
+            discount: parseInt(egg.discount, 2),
             cur_egg_price: currentEgg.price,
           });
         }
