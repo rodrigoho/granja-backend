@@ -121,10 +121,25 @@ class CustomerController {
     //   return res.status(400).json({ error: 'Validation fails' });
     // }
 
-    // const { name, email } = req.body;
     const customer = await Customer.findByPk(req.params.id);
 
-    await customer.update(req.body);
+    const {
+      discount,
+      rural_fund_tax: ruralFundTax,
+      icms_tax: icmsTax,
+    } = req.body;
+
+    const formattedDiscount = parseFloat(discount);
+    const formattedRuralFundTax = parseFloat(ruralFundTax);
+    const formattedIcmsTax = parseFloat(icmsTax);
+
+    // await customer.update(req.body);
+    await customer.update({
+      ...req.body,
+      discount: formattedDiscount,
+      rural_fund_tax: formattedRuralFundTax,
+      icms_tax: formattedIcmsTax,
+    });
 
     return res.json({ status: 'success' });
   }

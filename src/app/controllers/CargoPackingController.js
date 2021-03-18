@@ -374,7 +374,6 @@ class CargoPackingController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      is_paid: Yup.boolean().required(),
       due_to: Yup.date().required(),
       eggs_cargo: Yup.array(),
       has_insurance_fee: Yup.boolean(),
@@ -411,10 +410,12 @@ class CargoPackingController {
       payments,
     } = req.body;
 
-    const paidAmount = payments.reduce(
-      (acc = 0, payment) => acc + parseFloat(payment.paid_amount),
-      0
-    );
+    const paidAmount =
+      payments &&
+      payments.reduce(
+        (acc = 0, payment) => acc + parseFloat(payment.paid_amount),
+        0
+      );
 
     const cargoPacking = await CargoPacking.findByPk(req.params.id);
 
