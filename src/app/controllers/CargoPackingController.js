@@ -91,6 +91,8 @@ class CargoPackingController {
         'rural_fund_tax',
         'total_price',
         'updated_by_user_id',
+        'label_price',
+        'label_amount',
       ],
       include: [
         {
@@ -139,6 +141,8 @@ class CargoPackingController {
       egg_tray_price: eggTrayPrice,
       egg_retail_box_amount: eggRetailBoxAmount,
       egg_retail_box_price: eggRetailBoxPrice,
+      label_amount: labelAmount,
+      label_price: labelPrice,
       paid_amount: paidAmount,
     } = cargoPacking;
 
@@ -166,6 +170,7 @@ class CargoPackingController {
 
     const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
     const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+    const labelValue = labelAmount * labelPrice;
     const decimalTotalEggsCargoPrice = parseFloat(totalEggsCargoPrice).toFixed(
       2
     );
@@ -176,7 +181,8 @@ class CargoPackingController {
       insurancePrice -
       ruralFundFee +
       eggTrayValue +
-      eggRetailBoxValue
+      eggRetailBoxValue +
+      labelValue
     ).toFixed(2);
 
     return res.json({
@@ -190,6 +196,7 @@ class CargoPackingController {
         ruralFundFee,
         eggTrayValue,
         eggRetailBoxValue,
+        labelValue,
         paidAmount,
       },
     });
@@ -197,7 +204,7 @@ class CargoPackingController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      is_paid: Yup.boolean().required(),
+      // is_paid: Yup.boolean().required(),
       due_to: Yup.date().required(),
       eggs_cargo: Yup.array(),
       has_insurance_fee: Yup.boolean(),
@@ -249,6 +256,8 @@ class CargoPackingController {
       egg_tray_price,
       egg_retail_box_amount,
       egg_retail_box_price,
+      label_price,
+      label_amount,
       due_to,
       customer_id,
       intermediary_id,
@@ -266,6 +275,7 @@ class CargoPackingController {
 
     const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
     const decimalEggBoxPrice = parseFloat(egg_retail_box_price).toFixed(2);
+    const decimalLabelPrice = parseFloat(label_price).toFixed(2);
     const decimalReceitpValue = receipt_value
       ? parseFloat(receipt_value).toFixed(2)
       : 0;
@@ -275,9 +285,12 @@ class CargoPackingController {
     const icmsToSave = icms_tax || 0;
     const eggTrayAmount = egg_tray_amount || 0;
     const eggTrayPrice = decimalEggTrayPrice || 0;
+
     const eggRetailBoxAmount = egg_retail_box_amount || 0;
     const eggRetailBoxPrice = decimalEggBoxPrice || 0;
-    // const totalPrice = total_price || 0;
+
+    const labelAmount = label_amount || 0;
+    const labelPrice = decimalLabelPrice || 0;
 
     const totalBoxesAmount = eggs_cargo.reduce(
       (acc, egg) => acc + parseFloat(egg.amount),
@@ -300,6 +313,7 @@ class CargoPackingController {
 
     const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
     const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+    const labelValue = parseFloat(labelAmount) * parseFloat(labelPrice);
 
     const balanceDue = +(
       totalEggsCargoPrice +
@@ -307,7 +321,8 @@ class CargoPackingController {
       insurancePrice -
       ruralFundFee +
       eggTrayValue +
-      eggRetailBoxValue
+      eggRetailBoxValue +
+      labelValue
     ).toFixed(2);
 
     const currentCargoPacking = await CargoPacking.create({
@@ -323,6 +338,8 @@ class CargoPackingController {
       egg_tray_price: eggTrayPrice,
       egg_retail_box_amount: eggRetailBoxAmount,
       egg_retail_box_price: eggRetailBoxPrice,
+      label_amount: labelAmount,
+      label_price: labelPrice,
       discount: discountToSave,
       rural_fund_tax: ruralFundTaxToSave,
       icms_tax: icmsToSave,
@@ -346,7 +363,7 @@ class CargoPackingController {
             cargo_packing_id: currentCargoPacking.id,
             egg_id: egg.eggId,
             amount: egg.amount,
-            discount: parseInt(egg.discount, 2),
+            discount: egg.discount,
             cur_egg_price: egg.eggPrice,
           });
       } catch (err) {
@@ -404,6 +421,8 @@ class CargoPackingController {
       egg_retail_box_price,
       egg_tray_amount,
       egg_tray_price,
+      label_price,
+      label_amount,
       receipt_value,
       receipt_number,
       created_by_user_id,
@@ -422,6 +441,8 @@ class CargoPackingController {
 
     const decimalEggTrayPrice = parseFloat(egg_tray_price).toFixed(2);
     const decimalEggBoxPrice = parseFloat(egg_retail_box_price).toFixed(2);
+    const decimalLabelPrice = parseFloat(label_price).toFixed(2);
+
     const decimalReceitpValue = receipt_value
       ? parseFloat(receipt_value).toFixed(2)
       : 0;
@@ -429,8 +450,12 @@ class CargoPackingController {
     const icmsToSave = icms_tax || 0;
     const eggTrayAmount = egg_tray_amount || 0;
     const eggTrayPrice = decimalEggTrayPrice || 0;
+
     const eggRetailBoxAmount = egg_retail_box_amount || 0;
     const eggRetailBoxPrice = decimalEggBoxPrice || 0;
+
+    const labelAmount = label_amount || 0;
+    const labelPrice = decimalLabelPrice || 0;
 
     const totalBoxesAmount = eggs_cargo.reduce(
       (acc, egg) => acc + parseFloat(egg.amount),
@@ -453,6 +478,7 @@ class CargoPackingController {
 
     const eggTrayValue = parseFloat(eggTrayAmount) * parseFloat(eggTrayPrice);
     const eggRetailBoxValue = eggRetailBoxAmount * eggRetailBoxPrice;
+    const labelValue = parseFloat(labelAmount) * parseFloat(labelPrice);
 
     const balanceDue = +(
       totalEggsCargoPrice +
@@ -460,7 +486,8 @@ class CargoPackingController {
       insurancePrice -
       ruralFundFee +
       eggTrayValue +
-      eggRetailBoxValue
+      eggRetailBoxValue +
+      labelValue
     ).toFixed(2);
 
     const updatedCargoPacking = {
@@ -476,6 +503,8 @@ class CargoPackingController {
       egg_retail_box_price,
       egg_tray_amount,
       egg_tray_price,
+      label_amount: labelAmount,
+      label_price: labelPrice,
       receipt_value,
       receipt_number,
       created_by_user_id,
@@ -501,14 +530,14 @@ class CargoPackingController {
         if (orderItemToUpdate) {
           await orderItemToUpdate.update({
             amount: egg.amount,
-            discount: parseInt(egg.discount, 2),
+            discount: egg.discount,
           });
         } else {
           await OrderItem.create({
             cargo_packing_id: req.params.id,
             egg_id: currentEgg.id,
             amount: egg.amount,
-            discount: parseInt(egg.discount, 2),
+            discount: egg.discount,
             cur_egg_price: currentEgg.price,
           });
         }

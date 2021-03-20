@@ -17,6 +17,8 @@ class CargoPacking extends Model {
         egg_tray_price: Sequelize.DECIMAL,
         egg_retail_box_amount: Sequelize.INTEGER,
         egg_retail_box_price: Sequelize.DECIMAL,
+        label_amount: Sequelize.INTEGER,
+        label_price: Sequelize.DECIMAL,
         created_by_user_id: Sequelize.INTEGER,
         updated_by_user_id: Sequelize.INTEGER,
         receipt_number: Sequelize.INTEGER,
