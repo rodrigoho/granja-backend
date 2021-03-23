@@ -531,6 +531,7 @@ class CargoPackingController {
           await orderItemToUpdate.update({
             amount: egg.amount,
             discount: egg.discount,
+            cur_egg_price: egg.eggPrice,
           });
         } else {
           await OrderItem.create({
