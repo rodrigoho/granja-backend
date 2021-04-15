@@ -6,6 +6,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cron = require('node-cron');
 
+process.env.TZ = 'America/Sao_Paulo';
+
 const checkAndUpdate = async () => {
   const eggPricesList = await EggPrices.findAll({
     limit: 12,
@@ -27,7 +29,7 @@ const checkAndUpdate = async () => {
 
 checkAndUpdate();
 
-cron.schedule('0 6 * * *', async () => {
+cron.schedule('20 20 * * *', async () => {
   checkAndUpdate();
 });
 io.on('connection', (socket) => {

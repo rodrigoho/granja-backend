@@ -428,6 +428,7 @@ class CargoPackingController {
       created_by_user_id,
       additional_fee,
       payments,
+      custom_date,
     } = req.body;
 
     const paidAmount =
@@ -494,6 +495,7 @@ class CargoPackingController {
       id,
       eggs_cargo,
       is_paid,
+      custom_date,
       has_insurance_fee,
       is_billet,
       icms_tax,
