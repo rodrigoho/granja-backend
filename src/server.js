@@ -16,6 +16,9 @@ const checkAndUpdate = async () => {
 
   const newDate = format(new Date(), 'dd/MM/yyyy');
 
+  console.log('newDate', newDate);
+  console.log('price_date', eggPricesList[0].price_date);
+
   if (eggPricesList[0].price_date !== newDate) {
     eggPricesList.map(async (e) => {
       await EggPrices.create({

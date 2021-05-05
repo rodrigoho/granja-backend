@@ -531,7 +531,7 @@ class CargoPackingController {
 
         if (orderItemToUpdate) {
           await orderItemToUpdate.update({
-            amount: egg.amount,
+            amount: egg.amount ? egg.amount : 0,
             discount: egg.discount,
             cur_egg_price: egg.eggPrice,
           });
@@ -539,7 +539,7 @@ class CargoPackingController {
           await OrderItem.create({
             cargo_packing_id: req.params.id,
             egg_id: currentEgg.id,
-            amount: egg.amount,
+            amount: egg.amount ? egg.amount : 0,
             discount: egg.discount,
             cur_egg_price: currentEgg.price,
           });
