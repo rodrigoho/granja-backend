@@ -429,6 +429,7 @@ class CargoPackingController {
       additional_fee,
       payments,
       custom_date,
+      custom_date_timestamp,
     } = req.body;
 
     const paidAmount =
@@ -496,6 +497,7 @@ class CargoPackingController {
       eggs_cargo,
       is_paid,
       custom_date,
+      custom_date_timestamp,
       has_insurance_fee,
       is_billet,
       icms_tax,
@@ -561,7 +563,7 @@ class CargoPackingController {
     const {
       page = 1,
       sort_direction: sortDirection = 'ASC',
-      column_to_sort: columnToSort = 'due_to',
+      column_to_sort: columnToSort = 'custom_date_timestamp',
     } = req.query;
 
     const dueCargoPackings = await CargoPacking.findAndCountAll({
