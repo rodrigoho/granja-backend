@@ -19,7 +19,7 @@ const checkAndUpdate = async () => {
   console.log('newDate', newDate);
   console.log('price_date', eggPricesList[0].price_date);
 
-  if (eggPricesList[0].price_date !== newDate) {
+  if (eggPricesList.length && eggPricesList[0].price_date !== newDate) {
     eggPricesList.map(async (e) => {
       await EggPrices.create({
         egg_id: e.egg_id,
@@ -32,7 +32,7 @@ const checkAndUpdate = async () => {
 
 checkAndUpdate();
 
-cron.schedule('20 20 * * *', async () => {
+cron.schedule('0 6 * * *', async () => {
   checkAndUpdate();
 });
 io.on('connection', (socket) => {

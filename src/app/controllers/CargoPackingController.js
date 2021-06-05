@@ -209,7 +209,7 @@ class CargoPackingController {
       eggs_cargo: Yup.array(),
       has_insurance_fee: Yup.boolean(),
       customer_id: Yup.number().required(),
-      // created_by_user_id: Yup.number().required(),
+      created_by_user_id: Yup.number().required(),
       // receipt_number: Yup.number().required(),
       // receipt_value: Yup.number().required(),
     });
@@ -324,6 +324,8 @@ class CargoPackingController {
       eggRetailBoxValue +
       labelValue
     ).toFixed(2);
+
+    console.log(`ID\n\n\n${created_by_user_id}\n\n\n`);
 
     const currentCargoPacking = await CargoPacking.create({
       is_paid,
