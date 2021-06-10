@@ -547,7 +547,7 @@ class CargoPackingController {
             egg_id: currentEgg.id,
             amount: egg.amount ? egg.amount : 0,
             discount: egg.discount,
-            cur_egg_price: currentEgg.price,
+            cur_egg_price: egg.eggPrice,
           });
         }
       } catch (err) {
