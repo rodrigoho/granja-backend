@@ -9,6 +9,8 @@ import User from '../models/User';
 
 class CargoPackingController {
   async indexAll(req, res) {
+    console.log('\noi\n');
+
     const {
       page = 1,
       sort_direction: sortDirection = 'ASC',
@@ -560,7 +562,6 @@ class CargoPackingController {
     });
   }
 
-  // esse que ta usando
   async indexDue(req, res) {
     const {
       page = 1,
@@ -605,6 +606,44 @@ class CargoPackingController {
     });
 
     return res.json(dueCargoPackings);
+  }
+
+  async filterdByCustomer(req, res) {
+    const cargoPackings = await CargoPacking.findAndCountAll({
+      where: {
+        customer_id: req.params.id,
+      },
+      limit: 10,
+      attributes: [
+        'id',
+        'is_paid',
+        'due_to',
+        'has_insurance_fee',
+        'receipt_number',
+        'customer_id',
+        'created_at',
+        'custom_date',
+        'total_price',
+        'paid_amount',
+        'custom_date_timestamp',
+      ],
+      include: [
+        {
+          model: Customer,
+          as: 'customer',
+          attributes: ['name'],
+          paranoid: false,
+        },
+        {
+          model: IntermediaryCustomer,
+          as: 'intermediary',
+          attributes: ['name', 'email', 'phone'],
+          paranoid: false,
+        },
+      ],
+    });
+
+    return res.json(cargoPackings);
   }
 
   async indexPaid(req, res) {

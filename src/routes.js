@@ -54,6 +54,10 @@ routes.get('/cargo-packing/:id', CargoPackingController.filteredById);
 // routes.get('/cargo-packings/:id', CargoPackingController.filteredByCustomer);
 routes.post('/cargo-packing', CargoPackingController.store);
 routes.put('/cargo-packing/:id', CargoPackingController.update);
+routes.get(
+  '/cargo-packing/by-customer/:id',
+  CargoPackingController.filterdByCustomer
+);
 // routes.get('/due-cargo-packing', CargoPackingController.indexDue);
 // routes.get('/paid-cargo-packing', CargoPackingController.indexPaid);
 routes.get(
