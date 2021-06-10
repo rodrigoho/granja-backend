@@ -11,13 +11,10 @@ process.env.TZ = 'America/Sao_Paulo';
 const checkAndUpdate = async () => {
   const eggPricesList = await EggPrices.findAll({
     limit: 12,
-    order: [['createdAt', 'DESC']],
+    order: [['updatedAt', 'DESC']],
   });
 
   const newDate = format(new Date(), 'dd/MM/yyyy');
-
-  console.log('newDate', newDate);
-  console.log('price_date', eggPricesList[0].price_date);
 
   if (eggPricesList.length && eggPricesList[0].price_date !== newDate) {
     eggPricesList.map(async (e) => {
