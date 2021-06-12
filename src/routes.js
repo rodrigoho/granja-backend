@@ -47,6 +47,7 @@ routes.put('/eggs/:id', EggController.update);
 // routes.get(`/eggs-prices/`, EggPricesController.index);
 routes.post(`/eggs-prices-selected`, EggPricesController.indexSelected);
 routes.post(`/eggs-prices/create`, EggPricesController.store);
+routes.put(`/eggs-prices/update`, EggPricesController.update);
 
 routes.get('/cargo-packing', CargoPackingController.indexAll);
 routes.get('/cargo-packing/:id', CargoPackingController.filteredById);
